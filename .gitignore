@@ -1,0 +1,14 @@
+
+# g++/clang++ artifacts
+*.o
+libScr.a
+
+# Code::Blocks artifacts
+bin
+obj
+*.depend
+*.layout
+
+# Executable files
+check_manager/check_manager
+check_simple/check_simple

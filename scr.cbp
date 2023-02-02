@@ -33,8 +33,8 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c++11" />
 			<Add option="-Wall" />
+			<Add option="-std=c++98" />
 			<Add directory="../Spica/Cpp" />
 		</Compiler>
 		<Unit filename="CommandWindow.cpp" />
@@ -70,9 +70,6 @@
 		<Unit filename="scr.hpp" />
 		<Unit filename="scrtools.cpp" />
 		<Unit filename="scrtools.hpp" />
-		<Extensions>
-			<code_completion />
-			<debugger />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
