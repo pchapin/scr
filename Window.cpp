@@ -1,8 +1,7 @@
 /*! \file    Window.cpp
-    \brief   Implementation of class Simple_Window and Window.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Implementation of class Simple_Window and Window.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include <cstdlib>
 #include <cstring>
@@ -46,10 +45,10 @@ namespace scr {
      * background to nullptr. This ensures no problem when an undefined window is destroyed.
      */
     SimpleWindow::SimpleWindow( ) :
-        is_hidden ( false ),
-        is_defined( false ),
         hidden    ( NULL  ),
-        save_data ( NULL  )
+        save_data ( NULL  ),
+        is_defined( false ),
+        is_hidden ( false )
     { }
 
 

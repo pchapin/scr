@@ -1,8 +1,7 @@
 /*! \file    CommandWindow.hpp
-    \brief   Interface to class CommandWindow
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to class CommandWindow
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef COMMANDWINDOW_HPP
 #define COMMANDWINDOW_HPP

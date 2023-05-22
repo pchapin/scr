@@ -1,8 +1,7 @@
 /*! \file    Window.hpp
-    \brief   Interface to class Simple_Window and Window.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to class Simple_Window and Window.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef WINDOW_H
 #define WINDOW_H

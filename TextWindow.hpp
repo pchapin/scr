@@ -1,8 +1,7 @@
 /*! \file    TextWindow.hpp
-    \brief   Interface to class TextWindow.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to class TextWindow.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef TEXTWINDOW_HPP
 #define TEXTWINDOW_HPP

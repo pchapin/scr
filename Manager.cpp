@@ -1,8 +1,7 @@
 /*! \file    Manager.cpp
-    \brief   Implementation of the window Manager.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Implementation of the window Manager.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include <list>
 #include <stdexcept>
@@ -216,7 +215,7 @@ namespace scr {
         int desired_row, desired_column;
         int desired_width, desired_height;
 
-        for( ; ; ) {
+        while( true ) {
 
             update_display( );
             ch = key( );

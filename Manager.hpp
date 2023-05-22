@@ -1,8 +1,7 @@
 /*! \file    Manager.hpp
-    \brief   Window manager definition file.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Window manager definition file.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef MANAGER_HPP
 #define MANAGER_HPP

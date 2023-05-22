@@ -1,8 +1,7 @@
 /*! \file    TextWindow.cpp
-    \brief   Implementation of class TextWindow.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Implementation of class TextWindow.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include <cstdio>
 #include <cstdarg>
@@ -19,10 +18,10 @@ namespace scr {
     /*!
      * This helper class makes it easier to manage hidden windows. When an object of this class
      * is constructed the state of a specified window is remembered and that window is forced to
-     * be visable. When the object is then destroyed, the window is rehidden if it was hidden in
-     * the first place. Using an object of this class in the TextWindow methods below allows
-     * those methods to operate correctly on hidden windows (by temporarly showing them for the
-     * duration of the operation).
+     * be visible. When the object is then destroyed, the window is hidden again if it was
+     * hidden in the first place. Using an object of this class in the TextWindow methods below
+     * allows those methods to operate correctly on hidden windows (by temporarily showing them
+     * for the duration of the operation).
      */
     class TextWindowHideManager {
     private:
@@ -50,7 +49,7 @@ namespace scr {
         va_list arg_pointer;
         int     actual_row;
         int     actual_column;
-        char    buffer[128+1];
+        char    buffer[128 + 1];
 
         if( current_row == height( ) ) {
             scroll( UP, row( ), column( ), width( ), height( ), 1, color( ) );
@@ -63,8 +62,9 @@ namespace scr {
         actual_row = row( ) + current_row;
         actual_column = column( );
 
-        // Print information into a local buffer. Note: problems arise if buffer too short.
-        vsprintf( buffer, format_string, arg_pointer );
+        // Print information into a local buffer.
+        // TODO: Is the buffer big enough?
+        vsnprintf( buffer, 128 + 1, format_string, arg_pointer );
 
         // Print material on the screen, making sure the rest of the line is cleared.
         print_text( actual_row, actual_column, width( ), "%s", buffer );
@@ -88,7 +88,7 @@ namespace scr {
         TextWindowHideManager object( this, is_hidden );
 
         va_list arg_pointer;
-        char    buffer[128+1];
+        char    buffer[128 + 1];
 
         // If coordinates outside of the window, return at once.
         if( print_row >= height( ) ) return;
@@ -100,8 +100,9 @@ namespace scr {
         int actual_row = row( ) + print_row;
         int actual_column = column( ) + print_column;
 
-        // Print information into a local buffer. Note: problems arise if buffer too short.
-        vsprintf( buffer, format_string, arg_pointer );
+        // Print information into a local buffer.
+        // TODO: Is the buffer big enough?
+        vsnprintf( buffer, 128 + 1, format_string, arg_pointer );
 
         // Print material on the screen.
         print_text( actual_row, actual_column, width( ) - print_column - 1, "%s", buffer );

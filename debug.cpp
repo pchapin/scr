@@ -1,195 +1,175 @@
 /*! \file    debug.cpp
-    \brief   Implementation of embedded debugging system.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-This file contains the debugging system. This system is based, loosely, on the debugging system
-described in the book "Debugging C" by Robert Ward. This system does not, however, make any
-direct use of the code in Ward's system.
-
-<h1>Introduction</h1>
-
-These days fancy external debuggers are normal. Such debuggers operate on a program the way a
-surgeon operates on a person. They open the program up against its wishes and examine its
-internals directly. This is perfectly reasonable in a hospital operating room, but it is not
-something that can be done in the field.
-
-In contrast the debugging system described here is simply another module in the program. By
-creating Tracer objects throughout your code you can define entry points to this resident
-module. Because the debugging module is part of the program, it becomes possible to do debugging
-in the field. For example, you could initialize the debugging system with an undocumented
-command, and then walk your end users through a debugging session over the phone while they are
-using <em>their</em> system and <em>their</em> data.
-
-One nice feature of the system described here is that the debugging module can call, on your
-interactive command, application specific functions (snap shots) that you write when you are
-composing your application. These functions are free to do any reasonable manipulation with
-global data including, for example, opening and reading files or communicating over the network.
-Your end user might execute a snap shot function that uploads data to your server or even that
-takes commands from you remotely!
-
-There can be substaintial effort involved in setting up and using this system---especially if
-you write complicated snap shot functions. However, by engaging in that effort you are, in
-effect, admitting that you may inadvertantly build some bugs into your code. If nothing else,
-this system will help you remove bugs by encouraging you to have a constructive attitude about
-bugs. When you use this system, you can't just hide your head in the sand and hope.
-
-<h1>Using the Debug System</h1>
-
-There are two aspects to using the system. The first has to do with inserting Tracer objects
-into your program and creating snap shot functions. The second has to do with the commands that
-are allowed when you executing program makes an entry into the system.
-
-<h2>Inserting Tracer Objects</h2>
-
-All Tracer objects are potentially entry points into the system. In other words, your program
-will stop at each Tracer object, display the command window, and allow you to enter debugging
-commands. In fact, Tracer objects can be selectively ignored using various methods. The simplest
-has to do with the Tracer object's detail level. Using the LEVEL command, you can set the
-sensitivity of the system so that only level 1 calls are actually activated. Alternatively, you
-could have all levels from 1 to, say, 5 active.
-
-My recommendation is to put a Tracer object at the start and end of all your functions. Use the
-object to display that function's parameters. You should make the detail level larger for lower
-level functions.
-
-You can also control which Tracer objects are triggered using the START/STOP facility. At the
-debugging control window, you can name a particular Tracer object as a "start point" and another
-tracer object as a "stop point." Then you can turn tracing off and run the program normally.
-When the start point is encountered, tracing will be turned back on (provided the detail level
-allows the start point to be seen) and you can trace in the usual way. When the stop point is
-encountered, tracing is turned back off and the program runs in an unihibited manner.
-
-The debugging system allows you to define several start and stop points at once.
-
-<h2>Creating Snapshot Functions</h2>
-
-Global data can be conveniently viewed using a snapshot function. These functions are normal
-functions that you write specifically to help debug your application. By registering these
-functions with register_snapshot( ), you will be able to execute them at any time using the SNAP
-command.
-
-There is no restriction on what a snapshot function could do. Such functions could perform some
-calculations on the data before displaying it, open and close files, and even terminate the
-program. Snapshot functions could display buffers that are being used by ISRs, communicate over
-a network, or interact with a serial port. Snapshot functions could even execute the system( )
-command and give the user access to operating system services. Snapshot functions are completely
-syncronous with the operation of the application; they execute on the same thread as the one
-that entered the function that triggered the Tracer in the first place. They thus appear to be
-called indirectly from an application function.
-
-<h2>Conditional Compilation</h2>
-
-You may not want all the debug stuff in your final version. However, you probably should keep
-the Tracer objects in your source code. Both of these goals can be realized using conditional
-compilation. Snapshot functions, for example, could be bracketed by #ifdef DEBUG ... #endif
-pairs. Using the macro:
-    
-<pre>
-#ifdef DEBUG
-#define D(x) x
-#else
-#define D(x)
-#endif
-</pre>
-
-you can enable or disable single lines of code easily depending on the state of the macro DEBUG.
-For example:
-
-<pre>
-D( Initialize_Debugging(); )
-...
-D( Tracer Object(
-     Update_List, 2, "Number of list items = %d, Head title = %s", n_items, head->title); )
-</pre>
-
-The second example shows the D() macro being used over multiple lines. This is allowed under the
-ANSI standard.
-
-<h2>Debug Commands</h2>
-    
-The following is a complete list of all the commands you can enter into the debugging command
-window.
-
-<dl>
-<dt>LEVEL n</dt>
-<dd>
-
-This command sets the sensitivity of the debugging system. After this command, only Tracer
-objects with a detail level <= n will activate the system. Note there is no problem with using 0
-or negative values for either n or the detail level in a Tracer object. By default after
-initialization the level is 1.
-
-</dd>
-
-<dt>M</dt>
-<dd>
-
-This command moves the command window to its "other" position on the screen. It is provided so
-that you can move the command window should it be covering something important.
-
-</dd>
-
-<dt>QUIT</dt>
-<dd>
-
-This command throws a const char* exception (a message from the debugging system).
-
-</dd>
-
-<dt>SNAP name</dt>
-<dd>
-
-This command causes the snapshot function "name" to execute. The name has to be the same (case
-significant) as the name used in the register_snapshot() call. Note that in this version it is
-not possible to pass parameters to the snapshot function.
-
-</dd>
-
-<dt>START name</dt>
-<dd>
-
-This command sets a start point at the Tracer object named "name". When a start point is
-encountered, tracing will be activated (at the current level). Thus you can set a start point,
-turn tracing off, and run your program normally. When the start point is reached, the command
-window will appear.
-
-</dd>
-
-<dt>STATUS</dt>
-<dd>
-
-This command displays the current values of your debugging parameters.
-
-</dd>
-
-<dt>STOP name</dt>
-<dd>
-
-This command sets a stop point at the Tracer entry named "name". When a stop point is
-encountered, tracing will be turned off. By using stop points together with start points, it's
-possible to use the system in only a constrained portion of your program.
-
-</dd>
-
-<dt>TRACE ON|OFF</dt>
-<dd>
-
-This command allows you to turn tracing on or off. Note that after a 'trace off' command, the
-program will run normally unless a start point is encountered.
-
-</dd>
-
-<dt>&lt;Return&gt;</dt>
-<dd>
-
-Striking the return key (ie no command) will cause the Tracer object's constructor or destructor
-to return and allow your program to continue normally. Repeated taps on the return key thus
-allows you to "single step" through your program (actually, from one Tracer object
-construction/destruction to the next).
-
-</dd>
-</dl>
-*/
+ *  \brief   Implementation of an embedded-in-program debugging system.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ *
+ * This file contains the debugging system. This system is based, loosely, on the debugging
+ * system described in the book "Debugging C" by Robert Ward. This system does not, however,
+ * make any direct use of the code in Ward's system.
+ *
+ * <h1>Introduction</h1>
+ *
+ * These days fancy external debuggers are normal. Such debuggers operate on a program the way a
+ * surgeon operates on a person. They open the program up against its wishes and examine its
+ * internals directly. This is perfectly reasonable in a hospital operating room, but it is not
+ * something that can be done in the field.
+ *
+ * In contrast, the debugging system described here is simply another module in the program. By
+ * creating Tracer objects throughout your code you can define entry points to this resident
+ * module. Because the debugging module is part of the program, it becomes possible to do
+ * debugging in the field. For example, you could initialize the debugging system with an
+ * undocumented command line option, and then walk your end users through a debugging session
+ * over the phone.
+ *
+ * One nice feature of the system described here is that the debugging module can call, on your
+ * interactive command, application specific functions (snapshots) that you write when you are
+ * constructing your application. These functions are free to do any reasonable manipulation
+ * with global data including, for example, opening and reading files or communicating over the
+ * network. Your end user might execute a snapshot function that uploads data to your server or
+ * even that takes commands from you remotely!
+ *
+ * There can be substantial effort involved in setting up and using this system---especially if
+ * you write complicated snapshot functions. However, by engaging in that effort you are, in
+ * effect, admitting that you may inadvertently build some bugs into your code. If nothing else,
+ * this system will help you remove bugs by encouraging you to have a constructive attitude
+ * about bugs.
+ *
+ * <h1>Using the Debug System</h1>
+ *
+ * There are two aspects to using the system. The first has to do with inserting Tracer objects
+ * into your program and creating snapshot functions. The second has to do with the commands
+ * that are allowed when your executing program makes an entry into the system.
+ *
+ * <h2>Inserting Tracer Objects</h2>
+ *
+ * All Tracer objects are potentially entry points into the system. In other words, your program
+ * will stop at each Tracer object, display the command window, and allow you to enter debugging
+ * commands. However, Tracer objects can be selectively ignored using various methods. The
+ * simplest has to do with the Tracer object's detail level. Using the LEVEL command, you can
+ * set the sensitivity of the system so that, for example, only level 1 calls are actually
+ * activated. Alternatively, you could have all levels from 1 to, say, 5 active.
+ *
+ * My recommendation is to put a Tracer object at the start, and potentially also the end, of
+ * all your functions. Use the object to display that function's parameters. You should make the
+ * detail level larger for lower level functions.
+ *
+ * You can also control which Tracer objects are triggered using the START/STOP facility. At the
+ * debugging control window, you can name a particular Tracer object as a "start point" and
+ * another tracer object as a "stop point." Then you can turn tracing off and run the program
+ * normally. When the start point is encountered, tracing will be turned back on (provided the
+ * detail level allows the start point to be seen) and you can trace in the usual way. When the
+ * stop point is encountered, tracing is turned back off and the program runs in an uninhibited
+ * manner.
+ *
+ * The debugging system allows you to define several start and stop points at once.
+ *
+ * <h2>Creating Snapshot Functions</h2>
+ *
+ * Global data can be conveniently viewed using a snapshot function. These functions are normal
+ * functions that you write specifically to help debug your application. By registering these
+ * functions with register_snapshot( ), you will be able to execute them at any time using the
+ * SNAP command.
+ *
+ * There is no restriction on what a snapshot function could do. Such functions could perform
+ * some calculations on the data before displaying it, open and close files, and even terminate
+ * the program. Snapshot functions could display buffers that are being used by ISRs,
+ * communicate over a network, or interact with a serial port. Snapshot functions could even
+ * execute the system( ) command and give the user access to operating system services. Snapshot
+ * functions are completely synchonous with the operation of the application; they execute on
+ * the same thread as the one that entered the function that triggered the Tracer in the first
+ * place. They thus appear to be called indirectly from an application function.
+ *
+ * <h2>Conditional Compilation</h2>
+ *
+ * You may not want all the debugging code in the release version of your program. However, you
+ * probably should keep the Tracer objects in your source code. Both of these goals can be
+ * realized using conditional compilation. Snapshot functions, for example, can be bracketed by
+ * #ifdef DEBUG ... #endif pairs. Also, the following macro is provided (in debug.hpp):
+ * 
+ * <pre>
+ * #ifdef DEBUG
+ * #define D(x) x
+ * #else
+ * #define D(x)
+ * #endif
+ * </pre>
+ *
+ * you can enable or disable single lines of code easily depending on the state of the macro DEBUG.
+ * For example:
+ *
+ * <pre>
+ * D( Initialize_Debugging(); )
+ * ...
+ * D( Tracer Object(
+ *     Update_List, 2, "Number of list items = %d, Head title = %s", n_items, head->title); )
+ * </pre>
+ *
+ * The second example shows the D() macro being used over multiple lines and with a single
+ * argument containing parenthesized commas.
+ * 
+ * Note that currently the object-like macro DEBUG is always defined by debug.hpp. A future
+ * version of this system may allow you to specify the state of DEBUG at compile time.
+ *
+ * <h2>Debug Commands</h2>
+ *    
+ * The following is a complete list of all the commands you can enter into the debugging command
+ * window.
+ *
+ * <dl>
+ * <dt>LEVEL n</dt><dd>
+ *
+ * This command sets the sensitivity of the debugging system. After this command, only Tracer
+ * objects with a detail level <= n will activate the system. Note there is no problem with
+ * using 0 or negative values for either n or the detail level in a Tracer object. The
+ * significance of the detail level is entirely up to the application developers. By default
+ * after initialization the level is 1.</dd>
+ *
+ * <dt>M</dt><dd>
+ *
+ * This command moves the command window to its "other" position on the screen. It is provided
+ * so that you can move the command window should it be covering something important.</dd>
+ *
+ * <dt>QUIT</dt><dd>
+ *
+ * This command throws a const char* exception (a message from the debugging system).</dd>
+ *
+ * <dt>SNAP name</dt><dd>
+ *
+ * This command causes the snapshot function "name" to execute. The name has to be the same
+ * (case significant) as the name used in the register_snapshot( ) call. Note that in this
+ * version it is not possible to pass parameters to the snapshot function.</dd>
+ *
+ * <dt>START name</dt><dd>
+ *
+ * This command sets a start point at the Tracer object named "name". When a start point is
+ * encountered, tracing will be activated (at the current level). Thus you can set a start
+ * point, turn tracing off, and run your program normally. When the start point is reached, the
+ * command window will appear. Start points are similar to breakpoints in a conventional
+ * debugger.</dd>
+ *
+ * <dt>STATUS</dt><dd>
+ *
+ * This command displays the current values of your debugging parameters.</dd>
+ *
+ * <dt>STOP name</dt><dd>
+ *
+ * This command sets a stop point at the Tracer entry named "name". When a stop point is
+ * encountered, tracing will be turned off. By using stop points together with start points,
+ * it's possible to use the system in only a constrained portion of your program.</dd>
+ *
+ * <dt>TRACE ON|OFF</dt><dd>
+ *
+ * This command allows you to turn tracing on or off. Note that after a 'trace off' command, the
+ * program will run normally unless a start point is encountered.</dd>
+ *
+ * <dt>&lt;Return&gt;</dt><dd>
+ *
+ * Striking the return key (i.e., no command) will cause the Tracer object's constructor or
+ * destructor to return and allow your program to continue normally. Repeated taps on the return
+ * key thus allows you to "single step" through your program (actually, from one Tracer object
+ * to the next).</dd>
+ * 
+ * </dl>
+ */
 
 #include <cctype>
 #include <cstdio>
@@ -502,12 +482,12 @@ static int in_snap_list(
  */
 static void command_loop( )
 {
-    char  command_buffer[GENERIC_BUF_SIZE+1];  // Buffer for command.
-    char  buffer[GENERIC_BUF_SIZE+1];      // General purpose buffer.
-    int   done = false;                    // =true when time to exit.
-    char *parts[MAX_PARTS];                // Points to portions of com str.
-    int   number_of_parts;                 // Number of parts in com str.
-    int   i;                               // Generic integer.
+    char  command_buffer[GENERIC_BUF_SIZE + 1];  // Buffer for command.
+    char  buffer[GENERIC_BUF_SIZE + 1];      // General purpose buffer.
+    int   done = false;                      // =true when time to exit.
+    char *parts[MAX_PARTS];                  // Points to portions of com str.
+    int   number_of_parts;                   // Number of parts in com str.
+    int   i;                                 // Generic integer.
 
     do {
         // Print prompt and get user input.
@@ -549,7 +529,7 @@ static void command_loop( )
                     }
                     else {
                         detail_level = atoi( parts[1] );
-                        sprintf( buffer, "Detail level set to %d", detail_level );
+                        snprintf( buffer, GENERIC_BUF_SIZE + 1, "Detail level set to %d", detail_level );
                         message_window( DBG_MESSAGE, buffer );
                     }
                     break;
@@ -577,7 +557,7 @@ static void command_loop( )
                     }
                     else {
                         strncpy( show_names[number_of_shows], parts[1], MAX_NAME_LEN );
-                        sprintf( buffer, "Show ON at %s", show_names[number_of_shows] );
+                        snprintf( buffer, GENERIC_BUF_SIZE + 1, "Show ON at %s", show_names[number_of_shows] );
                         message_window( DBG_MESSAGE, buffer );
                         number_of_shows++;
                     }
@@ -591,7 +571,7 @@ static void command_loop( )
                         message_window( DBG_ERROR, "No snapshot functions registered" );
                     }
                     else if( ( i = in_snap_list( parts[1], snappers, number_of_snaps ) ) == -1 ) {
-                        sprintf( buffer, "Snapshot function %s unknown", parts[1] );
+                        snprintf( buffer, GENERIC_BUF_SIZE + 1, "Snapshot function %s unknown", parts[1] );
                         message_window( DBG_ERROR, buffer );
                     }
                     else {
@@ -631,7 +611,7 @@ static void command_loop( )
                     message_window( DBG_MESSAGE, "Tracing is now OFF" );
                 }
                 else {
-                    sprintf( buffer, "Command garbled,  what is '%s' ?", parts[1] );
+                    snprintf( buffer, GENERIC_BUF_SIZE + 1, "Command garbled,  what is '%s' ?", parts[1] );
                     message_window( DBG_ERROR, buffer );
                 }
                 break;
@@ -677,7 +657,7 @@ namespace scr {
 
     //! Initialize the debugging system.
     /*!
-     * This function intializes scr and sets referesh_on_key to true (thus causing a display
+     * This function initializes scr and sets refresh_on_key to true (thus causing a display
      * refresh after every keystroke.
      *
      * \param window_placement Either DBG_TOP or DBG_BOTTOM depending on where the caller wants
@@ -783,7 +763,7 @@ namespace scr {
         // Prepare buffer for information output. BUG: problem if buffer overflows!
         va_start( args, format_string );
         if( format_string != NULL )
-            vsprintf( buffer, format_string, args );
+            vsnprintf( buffer, MAX_NAME_LEN + GENERIC_BUF_SIZE + 1, format_string, args );
         else
             buffer[0] = '\0';
         va_end( args );
@@ -805,7 +785,7 @@ namespace scr {
     //! Destructor of Tracer may cause a breakpoint.
     /*!
      * The destructor will cause a breakpoint if and only if the constructor did. This is true
-     * regardless of commands subseqently executed after the constructor was entered.
+     * regardless of commands subsequently executed after the constructor was entered.
      *
      * NOTE: The destructor has actually been removed from the class. See my notes in the header
      * file debug.hpp for more information. I'm keeping this code here for reference or in case
@@ -853,7 +833,7 @@ namespace scr {
         window_center_coordinates( full_width, full_height, &top_row, &left_column );
         open( top_row, left_column, full_width, full_height, color, DOUBLE_LINE );
 
-        sprintf( header_buffer, " %s ", header );
+        snprintf( header_buffer, GENERIC_BUF_SIZE + 1, " %s ", header );
         print_text(
             row( ) - 1,
             column( ) + width( ) - 1 - static_cast<int>( strlen( header_buffer ) ),

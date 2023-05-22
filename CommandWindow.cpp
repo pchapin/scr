@@ -1,8 +1,7 @@
 /*! \file    CommandWindow.cpp
-    \brief   Implementation of class CommandWindow.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Implementation of class CommandWindow.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include <cstring>
 #include <cstdlib>
@@ -136,13 +135,9 @@ namespace scr {
      */
     ImageBuffer *CommandWindow::get_image( )
     {
-        int width;
-        int height;
+        int width = image.get_width( );
 
-        width  = image.get_width( );
-        height = image.get_height( );
         image.clear( );
-
         image.copy( prompt.c_str( ), 1, 1, prompt.size( ), WHITE|REV_BLACK );
 
         int text_row = static_cast<int>( prompt.length( ) ) / width + 1;

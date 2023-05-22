@@ -1,15 +1,23 @@
 /*! \file    debug.hpp
-    \brief   Interface to embedded debugging system.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to an embedded-in-program debugging system.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef DEBUG_HPP
 #define DEBUG_HPP
 
+// For now, force debugging ON when using this header file.
+// TODO: Think about a more elegant way to manage this.
+// TODO: Should we also deal with <cassert>?
 #define DEBUG 1
 
-// Activate debugging stuff if and only if DEBUG is defined.
+#ifdef DEBUG
+#define D(x) x
+#else
+#define D(x)
+#endif
+
+// The debugging system is only available if DEBUG is defined.
 #ifdef DEBUG
 
 #include "scr.hpp"
@@ -28,13 +36,13 @@ namespace scr {
 
     //! Objects of this type cause breakpoints on construction.
     /*!
-     * In a previous version of this package, I also had them cause breakpoints on destruction.
-     * However one compiler (Borland) was destroying these objects at unexpected times and that
-     * caused for confusing output from the debugging system. In the current version of the
-     * software, there is no reason for the data members. Those members existed so the
-     * constructor could pass information to the destructor. I'm keeping the members there for
-     * now in case I want to go back to using the destructor or in case I think of something
-     * else good to do with them.
+     * In a previous version of this package, I also had objects of this type cause breakpoints
+     * on destruction. However one compiler (Borland) was destroying these objects at unexpected
+     * times and that caused for confusing output from the debugging system. In the current
+     * version of the software, there is no reason for the data members. Those members existed
+     * so the constructor could pass information to the destructor. I'm keeping the members
+     * there for now in case I want to go back to using the destructor or in case I think of
+     * something else good to do with them.
      */
     class Tracer {
         const char *breakpoint_name;  //!< Name for this Tracer object.

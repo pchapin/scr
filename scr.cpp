@@ -1,8 +1,7 @@
 /*! \file    scr.cpp
-    \brief   Implementation of portable screen handling functions.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Implementation of portable screen handling functions.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include "environ.hpp"
 
@@ -28,7 +27,7 @@
 
 // POSIX doesn't need SCR_ANSI specified.
 #if defined(SCR_ANSI) && (eOPSYS == ePOSIX)
-#error POSIX does not want SCR_ANSI defined. It uses curses.
+#error POSIX does not want SCR_ANSI defined. The Curses library is used.
 #endif
 
 #include <cctype>
@@ -66,7 +65,7 @@
 #include <ncurses.h>
 #include <term.h>
 
-// Crude from <term.h> that interfers with my stuff...
+// Crude from <term.h> that interferes with Scr...
 #undef clear_screen
 #undef max_colors
 #endif
@@ -901,7 +900,7 @@ namespace scr {
      *  \param column The column number of the text's starting position.
      *  \param Count The maximum number of characters to print.
      *  \param attribute The color attribute to use during the printing.
-     *  \param format <b>[in]</b>A printf-like format string describing what is to be printed.
+     *  \param format A printf-like format string describing what is to be printed.
      *  \param ... Any additional parameters as required by the format string.
      */
     void print( int row, int column, std::size_t Count, int attribute, const char *format, ... )
@@ -916,7 +915,7 @@ namespace scr {
         attribute = convert_attribute( attribute );
 
         va_start( args, format );
-        std::vsprintf( work_buffer, format, args );
+        std::vsnprintf( work_buffer, MAX_PRINT_SIZE + 1, format, args );
         screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
         while( *string && width-- ) {
             *screen_pointer++ = *string++;
@@ -948,7 +947,7 @@ namespace scr {
         adjust_dimensions( &row, &column, &width, &dummy_height );
 
         va_start( args, format );
-        std::vsprintf( work_buffer, format, args );
+        std::vsnprintf( work_buffer, MAX_PRINT_SIZE + 1, format, args );
         screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
         while( *string && width-- ) {
             *screen_pointer++ = *string++;

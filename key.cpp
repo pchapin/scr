@@ -1,11 +1,11 @@
 /*! \file    key.cpp
-    \brief   Basic keyboard input support.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-These functions return processed keystrokes in a platform independent way. In addition to
-returning normal letter keys, various special keys can also be detected. See the list of key
-constants in scr.h.
-*/
+ *  \brief   Basic keyboard input support.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ *
+ * These functions return processed keystrokes in a platform independent way. In addition to
+ * returning normal letter keys, various special keys can also be detected. See the list of key
+ * constants in scr.h.
+ */
 
 #include "environ.hpp"
 #include <cctype>
@@ -62,7 +62,7 @@ namespace scr {
      * \brief Get a keystroke.
      *
      * \return The keycode of the key the user pressed. Special keys are returned using extended
-     * keycodes.
+     * key codes.
      */
 
     /*! \fn void scr::refresh_on_key( bool flag )
@@ -86,7 +86,7 @@ namespace scr {
      * \brief Wait for a keystroke.
      *
      * \return The keycode of the key the user pressed. Special keys are returned using extended
-     * keycodes.
+     * key codes.
      */
 
 #if defined(SCR_ASCIIKEYS) || eOPSYS == ePOSIX
@@ -187,9 +187,12 @@ namespace scr {
     };
 
     // Mappings from the number keys to the K_ALT... codes.
-    static int alt_number_translation[] = {
-        K_ALT0, K_ALT1, K_ALT2, K_ALT3, K_ALT4, K_ALT5, K_ALT6, K_ALT7, K_ALT8, K_ALT9
-    };
+    //static int alt_number_translation[] = {
+    //    K_ALT0, K_ALT1, K_ALT2, K_ALT3, K_ALT4, K_ALT5, K_ALT6, K_ALT7, K_ALT8, K_ALT9
+    //};
+    // The obvious thing to do here is to use K_CTRLA as a prefix for digit characters. However,
+    // that is already being used for function keys. This is commented out to emphasize that it
+    // is not being used and to silence a compiler warning.
 
     // Mappings from the number keys to various types of function key codes.
     static int function_translation[] = {
