@@ -1,8 +1,7 @@
 /*! \file    StatusLine.cpp
-    \brief   Implementation of class StatusLine.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Implementation of class StatusLine.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include "scr.hpp"
 #include "StatusLine.hpp"

@@ -1,8 +1,7 @@
 /*! \file    DisplayWindow.hpp
-    \brief   Interface to class DisplayWindow.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to class DisplayWindow.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef DISPLAYWINDOW_HPP
 #define DISPLAYWINDOW_HPP

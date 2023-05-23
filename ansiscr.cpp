@@ -1,10 +1,10 @@
 /*! \file    ansiscr.cpp
-    \brief   Implementation of simple ANSI escape handling functions.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-This file contains the implementation of a simple screen handling module. The module uses ANSI
-escape sequences. It is therefore highly reliable and portable, but slow.
-*/
+ *  \brief   Implementation of simple ANSI escape handling functions.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ *
+ * This file contains the implementation of a simple screen handling module. The module uses
+ * ANSI escape sequences. It is therefore highly reliable and portable, but slow.
+ */
 
 #include <iostream>
 #include "ansiscr.hpp"

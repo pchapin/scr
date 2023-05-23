@@ -3,16 +3,6 @@
 *.o
 libScr.a
 
-# Code::Blocks artifacts
-bin
-obj
-*.depend
-*.layout
-
-# Executable files
-check_manager/check_manager
-check_simple/check_simple
-
 # Visual Studio artifacts
 .vs
 Debug
@@ -24,3 +14,20 @@ Release
 *.err
 scr.lib
 
+# Code::Blocks artifacts
+bin
+obj
+*.depend
+*.layout
+
+# Documentation artifacts
+doc/api
+
+# Executable files
+check_manager/check_manager
+check_manager/check_manager.exe
+check_simple/check_simple
+check_simple/check_simple.exe
+
+# macOS related files
+.DS_Store

@@ -1,8 +1,7 @@
 /*! \file    SelectWindow.hpp
-    \brief   Interface to class SelectWindow.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to class SelectWindow.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef SELECTWINDOW_HPP
 #define SELECTWINDOW_HPP

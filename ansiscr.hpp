@@ -1,16 +1,16 @@
 /*! \file    ansiscr.hpp
-    \brief   Functions for I/O using ANSI escape sequences.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-The functions in this file do I/O using ANSI standard escape sequences. For this to work an
-appropriate console driver must be loaded. Typically this is only an option on Unix systems, but
-MS-DOS and some other systems also support ANSI console drivers.
-
-Although this method of screen handling is quite slow, it has the advantage of using only
-standard I/O facilities. In principle this makes it very portable. This also means that, for
-example, one can redirect the output of a program using this approach to a file and then later
-rebuild that output by just printing the saved file.
-*/
+ *  \brief   Functions for I/O using ANSI escape sequences.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ *
+ * The functions in this file do I/O using ANSI standard escape sequences. For this to work an
+ * appropriate console driver must be loaded. Typically this is only an option on Unix systems, but
+ * MS-DOS and some other systems also support ANSI console drivers.
+ * 
+ * Although this method of screen handling is quite slow, it has the advantage of using only
+ * standard I/O facilities. In principle this makes it very portable. This also means that, for
+ * example, one can redirect the output of a program using this approach to a file and then
+ * later rebuild that output by just printing the saved file.
+ */
 
 #ifndef ANSISCR_HPP
 #define ANSISCR_HPP

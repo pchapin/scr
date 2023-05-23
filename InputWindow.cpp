@@ -1,8 +1,7 @@
 /*! \file    InputWindow.cpp
-    \brief   Implementation of class InputWindow.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Implementation of class InputWindow.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include <cstring>
 

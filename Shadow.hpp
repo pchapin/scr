@@ -1,8 +1,7 @@
 /*! \file    Shadow.hpp
-    \brief   Interface to class Shadow
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to class Shadow
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef SHADOW_HPP
 #define SHADOW_HPP

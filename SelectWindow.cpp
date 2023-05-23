@@ -1,8 +1,7 @@
 /*! \file    SelectWindow.cpp
-    \brief   Implementation of class SelectWindow.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Implementation of class SelectWindow.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include <climits>
 #include "scr.hpp"

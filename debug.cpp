@@ -1,12 +1,13 @@
 /*! \file    debug.cpp
  *  \brief   Implementation of an embedded-in-program debugging system.
  *  \author  Peter Chapin <chapinp@proton.me>
+ *  \date    2023-05-23
  *
  * This file contains the debugging system. This system is based, loosely, on the debugging
  * system described in the book "Debugging C" by Robert Ward. This system does not, however,
  * make any direct use of the code in Ward's system.
  *
- * <h1>Introduction</h1>
+ * \section Introduction
  *
  * These days fancy external debuggers are normal. Such debuggers operate on a program the way a
  * surgeon operates on a person. They open the program up against its wishes and examine its
@@ -33,13 +34,13 @@
  * this system will help you remove bugs by encouraging you to have a constructive attitude
  * about bugs.
  *
- * <h1>Using the Debug System</h1>
+ * \section Using the Debug System</h1>
  *
  * There are two aspects to using the system. The first has to do with inserting Tracer objects
  * into your program and creating snapshot functions. The second has to do with the commands
  * that are allowed when your executing program makes an entry into the system.
  *
- * <h2>Inserting Tracer Objects</h2>
+ * \subsection Inserting Tracer Objects
  *
  * All Tracer objects are potentially entry points into the system. In other words, your program
  * will stop at each Tracer object, display the command window, and allow you to enter debugging
@@ -62,7 +63,7 @@
  *
  * The debugging system allows you to define several start and stop points at once.
  *
- * <h2>Creating Snapshot Functions</h2>
+ * \subsection Creating Snapshot Functions
  *
  * Global data can be conveniently viewed using a snapshot function. These functions are normal
  * functions that you write specifically to help debug your application. By registering these
@@ -78,30 +79,26 @@
  * the same thread as the one that entered the function that triggered the Tracer in the first
  * place. They thus appear to be called indirectly from an application function.
  *
- * <h2>Conditional Compilation</h2>
+ * \subsection Conditional Compilation
  *
  * You may not want all the debugging code in the release version of your program. However, you
  * probably should keep the Tracer objects in your source code. Both of these goals can be
  * realized using conditional compilation. Snapshot functions, for example, can be bracketed by
  * #ifdef DEBUG ... #endif pairs. Also, the following macro is provided (in debug.hpp):
  * 
- * <pre>
- * #ifdef DEBUG
- * #define D(x) x
- * #else
- * #define D(x)
- * #endif
- * </pre>
+ *     #ifdef DEBUG
+ *     #define D(x) x
+ *     #else
+ *     #define D(x)
+ *     #endif
  *
  * you can enable or disable single lines of code easily depending on the state of the macro DEBUG.
  * For example:
  *
- * <pre>
- * D( Initialize_Debugging(); )
- * ...
- * D( Tracer Object(
- *     Update_List, 2, "Number of list items = %d, Head title = %s", n_items, head->title); )
- * </pre>
+ *     D( Initialize_Debugging(); )
+ *     ...
+ *     D( Tracer Object(
+ *         Update_List, 2, "Number of list items = %d, Head title = %s", n_items, head->title); )
  *
  * The second example shows the D() macro being used over multiple lines and with a single
  * argument containing parenthesized commas.
@@ -109,66 +106,63 @@
  * Note that currently the object-like macro DEBUG is always defined by debug.hpp. A future
  * version of this system may allow you to specify the state of DEBUG at compile time.
  *
- * <h2>Debug Commands</h2>
+ * \subsection Debug Commands
  *    
  * The following is a complete list of all the commands you can enter into the debugging command
  * window.
  *
- * <dl>
- * <dt>LEVEL n</dt><dd>
+ * + LEVEL n
  *
- * This command sets the sensitivity of the debugging system. After this command, only Tracer
- * objects with a detail level <= n will activate the system. Note there is no problem with
- * using 0 or negative values for either n or the detail level in a Tracer object. The
- * significance of the detail level is entirely up to the application developers. By default
- * after initialization the level is 1.</dd>
+ *   This command sets the sensitivity of the debugging system. After this command, only Tracer
+ *   objects with a detail level <= n will activate the system. Note there is no problem with
+ *   using 0 or negative values for either n or the detail level in a Tracer object. The
+ *   significance of the detail level is entirely up to the application developers. By default
+ *   after initialization the level is 1.
  *
- * <dt>M</dt><dd>
+ * + M
  *
- * This command moves the command window to its "other" position on the screen. It is provided
- * so that you can move the command window should it be covering something important.</dd>
+ *   This command moves the command window to its "other" position on the screen. It is provided
+ *   so that you can move the command window should it be covering something important.
  *
- * <dt>QUIT</dt><dd>
+ * + QUIT
  *
- * This command throws a const char* exception (a message from the debugging system).</dd>
+ *   This command throws a const char* exception (a message from the debugging system).
  *
- * <dt>SNAP name</dt><dd>
+ * + SNAP name
  *
- * This command causes the snapshot function "name" to execute. The name has to be the same
- * (case significant) as the name used in the register_snapshot( ) call. Note that in this
- * version it is not possible to pass parameters to the snapshot function.</dd>
+ *   This command causes the snapshot function "name" to execute. The name has to be the same
+ *   (case significant) as the name used in the `register_snapshot` call. Note that in this
+ *   version it is not possible to pass parameters to the snapshot function.
  *
- * <dt>START name</dt><dd>
+ * + START name
  *
- * This command sets a start point at the Tracer object named "name". When a start point is
- * encountered, tracing will be activated (at the current level). Thus you can set a start
- * point, turn tracing off, and run your program normally. When the start point is reached, the
- * command window will appear. Start points are similar to breakpoints in a conventional
- * debugger.</dd>
+ *   This command sets a start point at the Tracer object named "name". When a start point is
+ *   encountered, tracing will be activated (at the current level). Thus you can set a start
+ *   point, turn tracing off, and run your program normally. When the start point is reached,
+ *   the command window will appear. Start points are similar to breakpoints in a conventional
+ *   debugger.
  *
- * <dt>STATUS</dt><dd>
+ * + STATUS
  *
- * This command displays the current values of your debugging parameters.</dd>
+ *   This command displays the current values of your debugging parameters.
  *
- * <dt>STOP name</dt><dd>
+ * + STOP name
  *
- * This command sets a stop point at the Tracer entry named "name". When a stop point is
- * encountered, tracing will be turned off. By using stop points together with start points,
- * it's possible to use the system in only a constrained portion of your program.</dd>
+ *   This command sets a stop point at the Tracer entry named "name". When a stop point is
+ *   encountered, tracing will be turned off. By using stop points together with start points,
+ *   it's possible to use the system in only a constrained portion of your program.
  *
- * <dt>TRACE ON|OFF</dt><dd>
+ * + TRACE ON|OFF
  *
- * This command allows you to turn tracing on or off. Note that after a 'trace off' command, the
- * program will run normally unless a start point is encountered.</dd>
+ *   This command allows you to turn tracing on or off. Note that after a 'trace off' command,
+ *   the program will run normally unless a start point is encountered.
  *
- * <dt>&lt;Return&gt;</dt><dd>
+ * + <Return>
  *
- * Striking the return key (i.e., no command) will cause the Tracer object's constructor or
- * destructor to return and allow your program to continue normally. Repeated taps on the return
- * key thus allows you to "single step" through your program (actually, from one Tracer object
- * to the next).</dd>
- * 
- * </dl>
+ *   Striking the return key (i.e., no command) will cause the Tracer object's constructor or
+ *   destructor to return and allow your program to continue normally. Repeated taps on the
+ *   return key thus allows you to "single step" through your program (actually, from one Tracer
+ *   object to the next).
  */
 
 #include <cctype>

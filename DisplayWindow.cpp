@@ -1,8 +1,7 @@
 /*! \file    DisplayWindow.cpp
-    \brief   Implementation of class DisplayWindow.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Implementation of class DisplayWindow.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include <climits>
 #include <cstring>

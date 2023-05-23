@@ -1,8 +1,7 @@
 /*! \file    StatusLine.hpp
-    \brief   Interface to class StatusLine
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to class StatusLine
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef STATUSLINE_HPP
 #define STATUSLINE_HPP

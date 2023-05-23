@@ -1,8 +1,7 @@
 /*! \file    scrtools.hpp
-    \brief   Public interface to screen tools package.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Public interface to screen tools package.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef SCRTOOLS_HPP
 #define SCRTOOLS_HPP

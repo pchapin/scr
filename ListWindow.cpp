@@ -1,8 +1,7 @@
 /*! \file    ListWindow.cpp
-    \brief   Window class for displaying a list of strings.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Window class for displaying a list of strings.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include <cstddef>
 #include <cstdlib>

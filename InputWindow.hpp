@@ -1,8 +1,7 @@
 /*! \file    InputWindow.cpp
-    \brief   Interface to class InputWindow.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to class InputWindow.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef INPUTWINDOW_HPP
 #define INPUTWINDOW_HPP

@@ -1,8 +1,7 @@
 /*! \file    ImageBuffer.cpp
-    \brief   Interface to class ImageBuffer.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Interface to class ImageBuffer.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #ifndef IMAGEBUFFER_HPP
 #define IMAGEBUFFER_HPP

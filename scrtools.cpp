@@ -1,8 +1,7 @@
 /*! \file    scrtools.cpp
-    \brief   Library of useful tools based on scr.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   Library of useful tools based on scr.
+ *  \author  Peter Chapin <chapinp@proton.me>
+ */
 
 #include <cctype>
 #include <cstring>
