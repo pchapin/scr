@@ -12,3 +12,15 @@ obj
 # Executable files
 check_manager/check_manager
 check_simple/check_simple
+
+# Visual Studio artifacts
+.vs
+Debug
+Release
+*.user
+
+# Open Watcom artifacts
+*.obj
+*.err
+scr.lib
+
