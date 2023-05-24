@@ -29,6 +29,10 @@ LIBRARY=libScr.a
 %.o:	%.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
 
+.PHONY:	all clean
+
+all:	$(LIBRARY)
+
 $(LIBRARY):	$(OBJECTS)
 	$(LINK) $(LINKFLAGS) $@ $(OBJECTS)
 

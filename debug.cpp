@@ -208,7 +208,7 @@ const int MAX_SNAPS        =  10; //!< Max number of snapshot functions.
 //! Stores information about debugging snapshot functions.
 /*!
  * This structure holds information about a single snapshot function. Each snapshot function has
- * a name that the user can use to refer to the function (not necessarly the name of the
+ * a name that the user can use to refer to the function (not necessarily the name of the
  * function itself), and, of course, the function's address.
  */
 struct SnapInfo {
@@ -226,8 +226,8 @@ class CursorMark {
     int old_column;
 
 public:
-    CursorMark( ) { scr::get_cursor_position( &old_row, &old_column ); scr::set_cursor_position( 1, 1 ); }
-   ~CursorMark( ) { scr::set_cursor_position(  old_row,  old_column ); }
+    CursorMark( ) { scr::get_cursor_position( old_row, old_column ); scr::set_cursor_position( 1, 1 ); }
+   ~CursorMark( ) { scr::set_cursor_position( old_row, old_column ); }
 };
 
 #endif

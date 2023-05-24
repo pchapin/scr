@@ -35,6 +35,8 @@ namespace scr {
         //! Erases the line from the cursor position to the right.
         void clear_to_eol( );
 
+        /// @cond NEVER
+
         // Nice names for the colors.
         const int F_BLACK    = 30;
         const int F_BLUE     = 34;
@@ -52,6 +54,8 @@ namespace scr {
         const int B_RED      = 41;
         const int B_WHITE    = 47;
         const int B_YELLOW   = 43;
+
+        /// @endcond
 
         //! Sets the current color to 'color'.
         void set_color( int color );

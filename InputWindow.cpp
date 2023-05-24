@@ -34,7 +34,7 @@ namespace scr {
 
     //! Constructor.
     /*!
-     * The default constructor builds an uninitailized InputWindow. The set( ) method can be
+     * The default constructor builds an uninitialized InputWindow. The set( ) method can be
      * later used to configure the window.
      */
     InputWindow::InputWindow( )
@@ -98,7 +98,7 @@ namespace scr {
     //! Opens an InputWindow.
     /*!
      * This method displays the InputWindow on the screen and lets the user input data. When the
-     * user has finished inputing text the window is automatically closed.
+     * user has finished entering text, the window is automatically closed.
      *
      * \param row The row coordinate for the top of the window. A value of zero means to
      * center the window vertically.
@@ -146,7 +146,7 @@ namespace scr {
                 prompt_text,
                 SimpleWindow::color( )
             );
-            get_cursor_position( &current_row, &current_column );
+            get_cursor_position( current_row, current_column );
 
             // Get the data from the user.
             gets(
@@ -186,7 +186,7 @@ namespace scr {
         SimpleWindow::show( );
 
         // Learn about the current cursor position.
-        get_cursor_position( &current_row, &current_column );
+        get_cursor_position( current_row, current_column );
 
         // Get data from the user.
         return_value = gets(

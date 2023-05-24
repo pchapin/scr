@@ -84,7 +84,7 @@ namespace scr {
     //=================================
 
 #if defined(SCR_DIRECT)
-    static int NMBR_ROWS = 25;   // Number of rows on the IBM PC scrren.
+    static int NMBR_ROWS = 25;   // Number of rows on the IBM PC screen.
     static int NMBR_COLS = 80;   // Number of columns on the IBM PC screen.
     const  int MAX_PRINT_SIZE = 1024; // Largest string Print() can handle.
 #endif
@@ -112,7 +112,7 @@ namespace scr {
     };
 
     static CharacterMap box_character_map;  // Maps scr box drawing characters to curses.
-    static ColorMap     colors_map;   // Maps portscr colors to curses colors.
+    static ColorMap     colors_map;   // Maps Scr colors to curses colors.
     static bool         color_works;  // =true if the terminal supports color.
 #endif
 
@@ -733,23 +733,24 @@ namespace scr {
      * This function accepts a specification of a region and forces that region to be contained
      * on the screen. It verifies the sanity of the row and column position of the region's
      * upper left corner and restricts the region's width and height so that the region does not
-     * overlap the edge of the screen.
+     * overlap the edge of the screen. Upon return from the function, the arguments will have
+     * been adjusted, if necessary.
      *
-     * \param r Pointer to the starting row of the region.
-     * \param c Pointer to the starting column of the region.
-     * \param w Pointer to the width of the region.
-     * \param h Pointer to the height of the region.
+     * \param r Starting row of the region.
+     * \param c Starting column of the region.
+     * \param w Width of the region.
+     * \param h Height of the region.
      */
-    void adjust_dimensions( int *r, int *c, int *w, int *h )
+    void adjust_dimensions( int &r, int &c, int &w, int &h )
     {
-        if( *r < 1 )         *r = 1;
-        if( *r > NMBR_ROWS ) *r = NMBR_ROWS;
-        if( *c < 1 )         *c = 1;
-        if( *c > NMBR_COLS ) *c = NMBR_COLS;
-        if( *h <= 0 )        *h = 1;
-        if( *w <= 0 )        *w = 1;
-        if( *r + *h - 1 > NMBR_ROWS ) *h = NMBR_ROWS - *r + 1;
-        if( *c + *w - 1 > NMBR_COLS ) *w = NMBR_COLS - *c + 1;
+        if( r < 1 )         r = 1;
+        if( r > NMBR_ROWS ) r = NMBR_ROWS;
+        if( c < 1 )         c = 1;
+        if( c > NMBR_COLS ) c = NMBR_COLS;
+        if( h <= 0 )        h = 1;
+        if( w <= 0 )        w = 1;
+        if( r + h - 1 > NMBR_ROWS ) h = NMBR_ROWS - r + 1;
+        if( c + w - 1 > NMBR_COLS ) w = NMBR_COLS - c + 1;
     }
 
 
@@ -786,7 +787,7 @@ namespace scr {
         unsigned  row_length;      // Number of bytes in row of region.
         char     *screen_pointer;  // Pointer into the screen image.
 
-        adjust_dimensions( &row, &column, &width, &height );
+        adjust_dimensions( row, column, width, height );
 
         row_length = 2 * width;
         screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
@@ -822,7 +823,7 @@ namespace scr {
         char *source;
         int   i;
 
-        adjust_dimensions( &row, &column, &width, &height );
+        adjust_dimensions( row, column, width, height );
 
         screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
         for( ; height > 0; height-- ) {
@@ -855,7 +856,7 @@ namespace scr {
         unsigned  row_length;      // Number of bytes in row of region.
         char     *screen_pointer;  // Pointer into the screen image.
 
-        adjust_dimensions( &row, &column, &width, &height );
+        adjust_dimensions( row, column, width, height );
 
         row_length = 2 * width;
         screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
@@ -892,7 +893,7 @@ namespace scr {
         char *destination;
         int   i;
 
-        adjust_dimensions( &row, &column, &width, &height );
+        adjust_dimensions( row, column, width, height );
 
         screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
         for( ; height > 0; height-- ) {
@@ -922,7 +923,7 @@ namespace scr {
         int     width = static_cast<int>( count );
         std::va_list args;
 
-        adjust_dimensions( &row, &column, &width, &dummy_height );
+        adjust_dimensions( row, column, width, dummy_height );
         attribute = convert_attribute( attribute );
 
         va_start( args, format );
@@ -955,7 +956,7 @@ namespace scr {
         int     width = static_cast<int>( count );
         std::va_list args;
 
-        adjust_dimensions( &row, &column, &width, &dummy_height );
+        adjust_dimensions( row, column, width, dummy_height );
 
         va_start( args, format );
         std::vsnprintf( work_buffer, MAX_PRINT_SIZE + 1, format, args );
@@ -984,7 +985,7 @@ namespace scr {
         char *destination;
         int   i;
 
-        adjust_dimensions( &row, &column, &width, &height );
+        adjust_dimensions( row, column, width, height );
         attribute = convert_attribute( attribute );
 
         screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
@@ -1017,7 +1018,7 @@ namespace scr {
         char *destination;
         int   i;
 
-        adjust_dimensions( &row, &column, &width, &height );
+        adjust_dimensions( row, column, width, height );
         attribute = convert_attribute( attribute );
 
         screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
@@ -1055,7 +1056,7 @@ namespace scr {
         int   row_counter;
 
         if( number_of_rows <= 0 ) return;
-        adjust_dimensions( &row, &column, &width, &height );
+        adjust_dimensions( row, column, width, height );
         attribute = convert_attribute( attribute );
 
         // If we're trying to scroll too much, just clear the region and return.
@@ -1117,10 +1118,10 @@ namespace scr {
      * \param row Points to a variable that receives the cursor's current row.
      * \param column Points to a variable that receives cursor's current column.
      */
-    void get_cursor_position( int *row, int *column )
+    void get_cursor_position( int &row, int &column )
     {
-        *row    = virtual_row;
-        *column = virtual_column;
+        row    = virtual_row;
+        column = virtual_column;
     }
 
 
