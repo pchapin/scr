@@ -40,7 +40,9 @@ namespace scr {
         char *hidden;       //!< Window image when a window is hidden.
         char *save_data;    //!< Saved background material.
 
-        // Disable copying of SimpleWindow objects.
+        // Disable copying of SimpleWindow objects by not defining these methods. Note that
+        // C++11 allows these methods to be defined as deleted functions, but we are only
+        // supporting C++98 at this time.
         SimpleWindow( const SimpleWindow &existing );
         SimpleWindow &operator=( const SimpleWindow &existing );
 

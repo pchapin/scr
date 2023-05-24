@@ -15,45 +15,53 @@
 //! Namespace for scr, the portable screen handling library.
 namespace scr {
 
-    // The use of 'int' here is so that the box drawing character values can be represented
-    // without truncating signed characters. This may cause problems down the road.
-    //
+    //! The box drawing characters.
+    /*!
+     * These characters are used to draw the various types of borders. The characters are
+     * integers so that the values can be represented without truncating signed characters. This
+     * may cause problems down the road.
+     */
     struct BoxChars {
-        int horizontal;
-        int vertical;
-        int upper_left;
-        int upper_right;
-        int lower_left;
-        int lower_right;
-        int left_stop;
-        int right_stop;
-        int top_stop;
-        int bottom_stop;
-        int cross;
+        int horizontal;   //!< Horizontal line.
+        int vertical;     //!< Vertical line.
+        int upper_left;   //!< Upper left corner.
+        int upper_right;  //!< Upper right corner.
+        int lower_left;   //!< Lower left corner.
+        int lower_right;  //!< Lower right corner.
+        int left_stop;    //!< Vertical line with a horizontal line to the right.
+        int right_stop;   //!< Vertical line with a horizontal line to the left.
+        int top_stop;     //!< Horizontal line with a vertical line below.
+        int bottom_stop;  //!< Horizontal line with a vertical line above.
+        int cross;        //!< Intersection of two lines.
     };
 
     //! These are the permissible box types.
     /*!
-     * The order of enumerators in this enumeration matters to the implementation. I'm not sure
-     * if adding NO_BORDER to this enumeration really makes sense or not.
+     * The order of enumerators in this enumeration matters to the implementation, so don't
+     * change it without first reviewing usages. The NO_BORDER enumerator is a special value
+     * that is used to represent the absence of a border.
+     *
+     * \todo Does it really make sense to add NO_BORDER to this enumeration?
      */
     enum BoxType {
-        DOUBLE_LINE,    //!< Double line border.
-        SINGLE_LINE,    //!< Single line border.
-        DARK_GRAPHIC,   //!< Dark "hash" border.
-        LIGHT_GRAPHIC,  //!< Light "hash" border.
-        SOLID,          //!< Solid border.
-        ASCII,          //!< Border made entirely from standard ASCII characters.
-        BLANK_BOX,      //!< Border made from spaces.
-        NO_BORDER       //!< Special value to represent no border.
+        DOUBLE_LINE,      //!< Double line border.
+        SINGLE_LINE,      //!< Single line border.
+        DARK_GRAPHIC,     //!< Dark "hash" border.
+        LIGHT_GRAPHIC,    //!< Light "hash" border.
+        SOLID,            //!< Solid border.
+        ASCII,            //!< Border made entirely from standard ASCII characters.
+        BLANK_BOX,        //!< Border made from spaces.
+        NO_BORDER         //!< Special value to represent no border.
     };
+
+    // Detailed documentation for the functions can be found in scr.cpp.
 
     // Start up and clean up.
     bool initialize( );
     void terminate( );
 
     // Look up the box drawing characters for a give box type.
-    BoxChars *get_box_characters( enum BoxType the_type );
+    BoxChars *get_box_characters( BoxType the_type );
 
     // Informational.
     bool is_monochrome( );
@@ -107,8 +115,8 @@ namespace scr {
     //! Exception thrown for invalid regions.
     /*!
      * A region is invalid if it overlaps the screen's boundaries or is entirely off the screen.
-     * A width and height of zero or less is also invalid, although many functions absorb those
-     * errors. The members of this structure specified the invalid region used.
+     * A width *and* height of zero or less is also invalid, although many functions absorb
+     * those errors. The members of this structure specified the invalid region used.
      */
     struct BadRegion {
         int row;

@@ -138,8 +138,8 @@ namespace scr {
     // General data required by all versions.
 
     // Note that if the values in the array below are ever changed, the character_associations
-    // array in initialize_character_map will have to be updated as well. That array is used by
-    // the curses version of scr to map box drawing characters to a terminal's alternate
+    // array in `initialize_character_map` will have to be updated as well. That array is used
+    // by the curses version of Scr to map box drawing characters to a terminal's alternate
     // character set.
     //
     static struct BoxChars box_definitions[]={
@@ -158,7 +158,7 @@ namespace scr {
     static char *screen_image;
     static int   virtual_column = 1;      // Virtual cursor coordinates.
     static int   virtual_row = 1;         //   etc...
-    static char  work_buffer[MAX_PRINT_SIZE+1];  // Used by print...
+    static char  work_buffer[MAX_PRINT_SIZE + 1];  // Used by print...
 #if eOPSYS == eWIN32
     static CHAR_INFO *console_image;  // Win32 requires this as well
 #endif
@@ -390,21 +390,21 @@ namespace scr {
 
     //! Initializes the scr library.
     /*!
-     * This function must be called before <em>any</em> other function from this package is
-     * used. It causes the screen to clear and the cursor to be moved to the home position. Once
-     * Initialize has been called, you should not use any other functions for screen or keyboard
-     * I/O besides the functions in scr.
+     * This function must be called before *any* other functions from this library are used. It
+     * causes the screen to clear and the cursor to be moved to the home position (upper left
+     * corner). Once `initialize` has been called, you should not use any other functions for
+     * screen or keyboard I/O besides the functions in Scr.
      *
-     * This function deduces the maximum sized screen supported by the system and arrange things
-     * so that information will be returned by number_of_rows and number_of_columns.
+     * This function deduces the maximum sized screen supported by the system and arrange for
+     * that information to be returned by `number_of_rows` and `number_of_columns`.
      *
      * This function can be called several times. All additional times will be ignored. However,
-     * terminate( ) must be called a corresponding number of times before it will shut down the
-     * scr library.
+     * `terminate` must be called a corresponding number of times before it will shut down the
+     * library.
      *
-     * \return <b>true</b> if the initialization was successful; <b>false</b> otherwise. If this
-     * function returns false you should not use any other Scr functions. There is no need to
-     * call terminate( ) in such a case.
+     * \return true if the initialization was successful; false otherwise. If this function
+     * returns false you should not use any other Scr functions. There is no need to call
+     * `terminate` in such a case.
      */
     bool initialize( )
     {
@@ -498,12 +498,14 @@ namespace scr {
     //! Shutdown the Scr library.
     /*!
      * This function must be called before the program exits. Once it has been called, no other
-     * function from this package can be used (except initialize( )). This function causes the
-     * screen to clear and the cursor to be moved to the home position.
+     * function from this package can be used (except `initialize` which can be used to restart
+     * Scr). This function causes the screen to clear and the cursor to be moved to the home
+     * position.
      *
-     * Calls to terminate( ) must be matched with calls to initialize( ). Only the last call to
-     * terminate( ), matching the first call to initialize( ), will actually shut down the scr
-     * library.
+     * Calls to `terminate` must be matched with calls to `initialize`. Only the last call to
+     * `terminate`, matching the first call to `initialize`, will actually shut down the
+     * library. Once the library is shut down, all future console I/O should be done using the
+     * standard console I/O functions.
      */
     void terminate( )
     {
@@ -599,11 +601,14 @@ namespace scr {
     //! Return the box drawing characters associated with a certain box type.
     /*!
      * Use this function to inspect the specific box drawing characters associated with a
-     * particular box type. In the current version of Scr it is permissible to modify the
+     * particular box type. In the current version of Scr, it is permissible to modify the
      * structure pointed at by the return value. Such modifications change the box drawing
-     * characters for that box type throughout the program.
+     * characters for that box type throughout the program. This is not a recommended practice,
+     * although it may be useful in some cases.
+     * 
+     * \bug The NO_BORDER option does not seem to be handled well. What should be done about it?
      */
-    struct BoxChars *get_box_characters( enum BoxType the_type )
+    BoxChars *get_box_characters( BoxType the_type )
     {
 #if defined(SCR_ASCIIBOXES)
         if( the_type == BLANK_BOX ) return &box_definitions[BLANK_BOX];
@@ -620,10 +625,10 @@ namespace scr {
      *  most cases automatically, it is sometimes desirable to handle color in a special way for
      *  monochrome screens.
      *
-     *  Note that scr assumes all OS/2 and Win32 systems can do color. This function might
-     *  return true only on MS-DOS and POSIX systems.
+     *  Note that Scr assumes all OS/2 and Win32 systems can do color. This function might
+     *  return true only on DOS and POSIX systems.
      *
-     *  \return <b>true</b> if a monochrome display is being used; <b>false</b> otherwise.
+     *  \return true if a monochrome display is being used; false otherwise.
      */
     bool is_monochrome( )
     {
@@ -727,13 +732,13 @@ namespace scr {
     /*!
      * This function accepts a specification of a region and forces that region to be contained
      * on the screen. It verifies the sanity of the row and column position of the region's
-     * upper left corner and to restricts the region's width and height so that the region does
-     * not overlap the edge of the screen.
+     * upper left corner and restricts the region's width and height so that the region does not
+     * overlap the edge of the screen.
      *
-     * \param r <b>[in-out]</b> Pointer to the starting row of the region.
-     * \param c <b>[in-out]</b> Pointer to the starting column of the region.
-     * \param w <b>[in-out]</b> Pointer to the width of the region.
-     * \param h <b>[in-out]</b> Pointer to the height of the region.
+     * \param r Pointer to the starting row of the region.
+     * \param c Pointer to the starting column of the region.
+     * \param w Pointer to the width of the region.
+     * \param h Pointer to the height of the region.
      */
     void adjust_dimensions( int *r, int *c, int *w, int *h )
     {
@@ -764,16 +769,16 @@ namespace scr {
 
     //! Read from a region of the screen.
     /*!
-     *  When this function returns the buffer will be filled with alternating characters and
-     *  attribute bytes. The buffer must be 2 * width * height in size. This function does not
-     *  check this.
+     * When this function returns the buffer will be filled with alternating characters and
+     * attribute bytes. The buffer must be 2 * width * height in size.
+     * 
+     * \bug This function does not check the size of the buffer.
      *
-     *  \param row The row number of the region's upper left corner.
-     *  \param column The column number of the region's upper left corner.
-     *  \param width The width of the region in columns.
-     *  \param height The height of the region in rows.
-     *  \param buffer <b>[out]</b> Pointer to a region of memory to receive the text and
-     *  attributes.
+     * \param row The row number of the region's upper left corner.
+     * \param column The column number of the region's upper left corner.
+     * \param width The width of the region in columns.
+     * \param height The height of the region in rows.
+     * \param buffer Pointer to a region of memory to receive the text and attributes.
      */
     void read( int row, int column, int width, int height, char *buffer )
     {
@@ -799,16 +804,17 @@ namespace scr {
 
     //! Read the text from a region of the screen.
     /*!
-     * This function is similar to read( ) except that it only returns the text in the region
+     * This function is similar to `read` except that it only returns the text in the region
      * instead of the text and the attributes. When this function returns the buffer will be
-     * filled with characters only. The buffer must be width * height in size. This function
-     * does not check this.
+     * filled with characters only. The buffer must be width * height in size.
+     * 
+     * \bug This function does not check the size of the buffer.
      *
-     *  \param row The row number of the region's upper left corner.
-     *  \param column The column number of the region's upper left corner.
-     *  \param width The width of the region in columns.
-     *  \param height The height of the region in rows.
-     *  \param buffer <b>[out]</b> Pointer to a region of memory to receive the text.
+     * \param row The row number of the region's upper left corner.
+     * \param column The column number of the region's upper left corner.
+     * \param width The width of the region in columns.
+     * \param height The height of the region in rows.
+     * \param buffer Pointer to a region of memory to receive the text.
      */
     void read_text( int row, int column, int width, int height, char *buffer )
     {
@@ -829,22 +835,25 @@ namespace scr {
 
     //! Write to a region of the screen.
     /*!
-     * When this function returns the scr internal screen buffer will be filled with alternating
+     * When this function returns the Scr internal screen buffer will be filled with alternating
      * characters and attribute bytes from the given memory space. The buffer is assumed to be
      * 2 * width * height in size.
+     * 
+     * \bug This function does not check the size of the buffer.
+     * \todo Should this function convert the attributes to account for monochrome monitors?
      *
-     *  \param row The row number of the region's upper left corner.
-     *  \param column The column number of the region's upper left corner.
-     *  \param width The width of the region in columns.
-     *  \param height The height of the region in rows.
-     *  \param buffer <b>[in]</b> Pointer to a region of memory from which the text and
-     *  attributes will be taken.
+     * \param row The row number of the region's upper left corner.
+     * \param column The column number of the region's upper left corner.
+     * \param width The width of the region in columns.
+     * \param height The height of the region in rows.
+     * \param buffer Pointer to a region of memory from which the text and attributes will be
+     * taken.
      */
     void write( int row, int column, int width, int height, const char *buffer )
     {
-        unsigned  number_of_rows;    // Loop index.
+        unsigned  number_of_rows;  // Loop index.
         unsigned  row_length;      // Number of bytes in row of region.
-        char     *screen_pointer;        // Pointer into the screen image.
+        char     *screen_pointer;  // Pointer into the screen image.
 
         adjust_dimensions( &row, &column, &width, &height );
 
@@ -857,23 +866,25 @@ namespace scr {
             // Copy data from buffer to screen image and adjust offsets.
             std::memcpy( screen_pointer, buffer, row_length );
             screen_pointer += 2 * NMBR_COLS;
-            buffer   += row_length;
+            buffer += row_length;
         }
     }
 
 
     //! Write text to a region of the screen.
     /*!
-     * This function is similar to scr::Write except that it only writes text. When this
-     * function returns the scr internal screen buffer will be filled with characters from the
-     * given memory space. The buffer is assumed to be width * height in size.
+     * This function is similar to `write` except that it only writes text. When this function
+     * returns the Scr internal screen buffer will be filled with characters from the given
+     * memory space. The buffer is assumed to be width * height in size.
+     * 
+     * \bug This function does not check the size of the buffer.
      *
-     *  \param row The row number of the region's upper left corner.
-     *  \param column The column number of the region's upper left corner.
-     *  \param width The width of the region in columns.
-     *  \param height The height of the region in rows.
-     *  \param buffer <b>[in]</b> Pointer to a region of memory from which the text will be
-     *  taken.
+     * \param row The row number of the region's upper left corner.
+     * \param column The column number of the region's upper left corner.
+     * \param width The width of the region in columns.
+     * \param height The height of the region in rows.
+     * \param buffer <b>[in]</b> Pointer to a region of memory from which the text will be
+     * taken.
      */
     void write_text( int row, int column, int width, int height, const char *buffer )
     {
@@ -894,21 +905,21 @@ namespace scr {
 
     //! Print formatted text and attributes.
     /*!
-     *  This function rewrites both the characters and the attributes on the screen.
+     * This function rewrites both the characters and the attributes on the screen.
      *
-     *  \param row The row number where the text will be printed.
-     *  \param column The column number of the text's starting position.
-     *  \param Count The maximum number of characters to print.
-     *  \param attribute The color attribute to use during the printing.
-     *  \param format A printf-like format string describing what is to be printed.
-     *  \param ... Any additional parameters as required by the format string.
+     * \param row The row number where the text will be printed.
+     * \param column The column number of the text's starting position.
+     * \param count The maximum number of characters to print.
+     * \param attribute The color attribute to use during the printing.
+     * \param format A printf-like format string describing what is to be printed.
+     * \param ... Any additional parameters as required by the format string.
      */
-    void print( int row, int column, std::size_t Count, int attribute, const char *format, ... )
+    void print( int row, int column, std::size_t count, int attribute, const char *format, ... )
     {
         char   *screen_pointer;
-        char   *string       = work_buffer;
+        char   *string = work_buffer;
         int     dummy_height = 1;
-        int     width = static_cast<int>( Count );
+        int     width = static_cast<int>( count );
         std::va_list args;
 
         adjust_dimensions( &row, &column, &width, &dummy_height );
@@ -927,21 +938,21 @@ namespace scr {
 
     //! Print formatted text.
     /*!
-     * This function is similar to print( ) except that it uses the color attributes currently
-     * on the screen instead of writing new attributes.
+     * This function is similar to `print` except that it uses the color attributes currently on
+     * the screen instead of writing new attributes.
      *
-     *  \param row The row number where the text will be printed.
-     *  \param column The column number of the text's starting position.
-     *  \param Count The maximum number of characters to print.
-     *  \param format <b>[in]</b> A printf-like format string describing what is to be printed.
-     *  \param ... Any additional parameters as required by the format string.
+     * \param row The row number where the text will be printed.
+     * \param column The column number of the text's starting position.
+     * \param Count The maximum number of characters to print.
+     * \param format A printf-like format string describing what is to be printed.
+     * \param ... Any additional parameters as required by the format string.
      */
-    void print_text( int row, int column, std::size_t Count, const char *format, ... )
+    void print_text( int row, int column, std::size_t count, const char *format, ... )
     {
         char   *screen_pointer;
-        char   *string       = work_buffer;
+        char   *string = work_buffer;
         int     dummy_height = 1;
-        int     width = static_cast<int>( Count );
+        int     width = static_cast<int>( count );
         std::va_list args;
 
         adjust_dimensions( &row, &column, &width, &dummy_height );
@@ -990,9 +1001,9 @@ namespace scr {
 
     //! Changes the color of a region of the screen.
     /*!
-     * This function is similar to clear( ) except that it does not erase any of the text in the
-     * region. It simply changes the color attribute for every character in the region to \p
-     * attribute.
+     * This function is similar to `clear` except that it does not erase any of the text in the
+     * region. It simply changes the color attribute for every character in the region to
+     * `attribute`.
      *
      * \param row The row number of the region's upper left corner.
      * \param column The column number of the region's upper left corner.
@@ -1023,18 +1034,18 @@ namespace scr {
 
     //! Scroll a region.
     /*!
-     * This function scrolls a region. Note that "UP" means that the text and attributes of the
+     * This function scrolls a region. Note that `UP` means that the text and attributes of the
      * specified region move up on the screen. The new color attribute used in the lines that
-     * are cleared is \p attribute. If \p number_of_rows is greater than or equal to \p height,
-     * the entire region is cleared as if a call was made to clear( ).
+     * are cleared is `attribute`. If `number_of_rows` is greater than or equal to `height`, the
+     * entire region is cleared as if a call was made to `clear`.
      *
-     *  \param Direction The direction to scroll. Must be either scr::UP or scr::DOWN.
+     *  \param Direction The direction to scroll. Must be either `scr::UP` or `scr::DOWN`.
      *  \param row The row number of the region's upper left corner.
      *  \param column The column number of the region's upper left corner.
      *  \param width The width of the region in columns.
      *  \param height The height of the region in rows.
      *  \param number_of_rows The number of rows to scroll.
-     *  \param attribute The color attribute to use in the newly "exposed" space.
+     *  \param attribute The color attribute to use in the newly exposed space.
      */
     void scroll( direction_t direction,
                  int row, int column, int width, int height, int number_of_rows, int attribute )
@@ -1103,8 +1114,8 @@ namespace scr {
 
     //! Retrieves the cursor's current position.
     /*!
-     * \param row <b>[out]</b> Points to a variable that receives the cursor's current row.
-     * \param column <b>[out]</b> Points to a variable that receives cursor's current column.
+     * \param row Points to a variable that receives the cursor's current row.
+     * \param column Points to a variable that receives cursor's current column.
      */
     void get_cursor_position( int *row, int *column )
     {
@@ -1124,26 +1135,26 @@ namespace scr {
     /*! \fn void scr::clear_screen( )
      * \brief Fill the entire screen with spaces.
      *
-     *  This function fills the screen with WHITE|REV_BLACK attributes. On some systems it might
-     *  use special techniques to clear the screen and hence be faster than an equivalent clear(
-     *  ) call. Note that, unlike the other scr functions, this function's effects are
-     *  immediate. You do not need to call refresh( ).
+     *  This function fills the screen with `WHITE|REV_BLACK` attributes. On some systems it
+     *  might use special techniques to clear the screen and hence be faster than an equivalent
+     *  `clear` call. Note that, unlike the other scr functions, this function's effects are
+     *  immediate. You do not need to call `refresh`.
      */
 
     /*! \fn void scr::redraw( )
      *  \brief Redraw the entire screen.
      *
-     *  Unlike refresh( ), this function always updates every character position on the screen.
-     *  As a result it is likely to be slower than refresh( ). You should use this function only
+     *  Unlike `refresh`, this function always updates every character position on the screen.
+     *  As a result it is likely to be slower than `refresh`. You should use this function only
      *  when you want to recover the screen completely.
      */
 
     /*! \fn void scr::refresh( )
-     *  \brief Synchronize the physical screen with scr's internal buffer.
+     *  \brief Synchronize the physical screen with Scr's internal buffer.
      *
      *  This function causes the phyiscal screen to display the same contents as is stored in
-     *  scr's internal buffer. With the exception of clear_screen( ), the effects of no scr
-     *  function is evident until refresh( ) (or redraw( )) is called. On some systems, this
+     *  Scr's internal buffer. With the exception of `clear_screen`, the effects of no Scr
+     *  function is evident until `refresh` (or `redraw`) is called. On some systems, this
      *  function might use a clever approach to updating the display so as to minimize the
      *  number of characters that are actually changed.
      */
@@ -1151,15 +1162,15 @@ namespace scr {
     /*! \fn void scr::off( )
      *  \brief Shuts down scr-mediated operation of the screen temporarily.
      *
-     *  This function reverts the display to normal stream I/O. No further use of scr should be
-     *  made except for on( ). This function is intended to be used when "shelling out" of a scr
+     *  This function reverts the display to normal stream I/O. No further use of Scr should be
+     *  made except for `on`. This function is intended to be used when "shelling out" of a Scr
      *  based program.
      */
 
     /*! \fn void scr::on( )
      *  \brief Restores scr-mediated operation of the screen.
      *
-     *  This function undoes the effect of off( ). It is intended to be used when returning from
+     *  This function undoes the effect of `off`. It is intended to be used when returning from
      *  an external shell.
      */
 
