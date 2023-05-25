@@ -381,8 +381,6 @@ namespace scr {
         // If it's CTRLA, handle ALT+letter and ALT+function key codes.
         if( ch == K_CTRLA ) {
             ch = getch( );
-            if( ch == '-'  ) return K_ALTDASH;
-            if( ch == '='  ) return K_ALTEQU;
             if( std::isdigit( ch ) ) return alt_function_translation[ch - '0'];
             if( std::isalpha( ch ) ) return alt_translation[std::tolower( ch ) - 'a'];
             return '*';
