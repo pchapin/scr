@@ -184,6 +184,8 @@ namespace scr {
     const int K_F8        = (  66 + XF );
     const int K_F9        = (  67 + XF );
     const int K_F10       = (  68 + XF );
+    const int K_F11       = ( 133 + XF );
+    const int K_F12       = ( 134 + XF );  // Same code as K_CPGUP. Why??
 
     // Shift + function keys.
     const int K_SF1       = (  84 + XF );
@@ -196,6 +198,8 @@ namespace scr {
     const int K_SF8       = (  91 + XF );
     const int K_SF9       = (  92 + XF );
     const int K_SF10      = (  93 + XF );
+    const int K_SF11      = ( 135 + XF );
+    const int K_SF12      = ( 136 + XF );
 
     // Ctrl + function keys.
     const int K_CF1       = (  94 + XF );
@@ -208,6 +212,8 @@ namespace scr {
     const int K_CF8       = ( 101 + XF );
     const int K_CF9       = ( 102 + XF );
     const int K_CF10      = ( 103 + XF );
+    const int K_CF11      = ( 137 + XF );
+    const int K_CF12      = ( 138 + XF );
 
     // Alt + function keys.
     const int K_AF1       = ( 104 + XF );
@@ -220,6 +226,8 @@ namespace scr {
     const int K_AF8       = ( 111 + XF );
     const int K_AF9       = ( 112 + XF );
     const int K_AF10      = ( 113 + XF );
+    const int K_AF11      = ( 139 + XF );
+    const int K_AF12      = ( 140 + XF );
 
     // Miscellaneous special keys.
     const int K_HOME      = (  71 + XF );
@@ -236,7 +244,7 @@ namespace scr {
     // Ctrl + miscellaneous special keys.
     const int K_CHOME     = ( 119 + XF );
     const int K_CEND      = ( 117 + XF );
-    const int K_CPGUP     = ( 132 + XF );
+    const int K_CPGUP     = ( 134 + XF );  // Same code as K_F12. Why??
     const int K_CPGDN     = ( 118 + XF );
     const int K_CLEFT     = ( 115 + XF );
     const int K_CRIGHT    = ( 116 + XF );
@@ -318,9 +326,6 @@ namespace scr {
     const int K_ALT8      = ( 127 + XF );
     const int K_ALT9      = ( 128 + XF );
     const int K_ALT0      = ( 129 + XF );
-
-    const int K_ALTDASH   = ( 130 + XF );
-    const int K_ALTEQU    = ( 131 + XF );
 
     /// @endcond
 }

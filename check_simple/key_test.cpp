@@ -25,6 +25,8 @@ static KeyInfo key_data[] = {
   { K_F8,     "F8"            },
   { K_F9,     "F9"            },
   { K_F10,    "F10"           },
+  { K_F11,    "F11"           },
+  { K_F12,    "F12"           },
 
   { K_SF1,    "Shift + F1"    },
   { K_SF2,    "Shift + F2"    },
@@ -36,6 +38,8 @@ static KeyInfo key_data[] = {
   { K_SF8,    "Shift + F8"    },
   { K_SF9,    "Shift + F9"    },
   { K_SF10,   "Shift + F10"   },
+  { K_SF11,   "Shift + F11"   },
+  { K_SF12,   "Shift + F12"   },
 
   { K_CF1,    "Ctrl + F1"     },
   { K_CF2,    "Ctrl + F2"     },
@@ -47,6 +51,8 @@ static KeyInfo key_data[] = {
   { K_CF8,    "Ctrl + F8"     },
   { K_CF9,    "Ctrl + F9"     },
   { K_CF10,   "Ctrl + F10"    },
+  { K_CF11,   "Ctrl + F11"    },
+  { K_CF12,   "Ctrl + F12"    },
 
   { K_AF1,    "Alt + F1"      },
   { K_AF2,    "Alt + F2"      },
@@ -58,6 +64,8 @@ static KeyInfo key_data[] = {
   { K_AF8,    "Alt + F8"      },
   { K_AF9,    "Alt + F9"      },
   { K_AF10,   "Alt + F10"     },
+  { K_AF11, "Alt + F11"       },
+  { K_AF12, "Alt + F12"       },
 
   { K_HOME,   "Home"          },
   { K_END,    "End"           },
