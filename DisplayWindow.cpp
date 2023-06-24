@@ -12,14 +12,14 @@ using namespace std;
 
 namespace scr {
 
-    //! Associate a list<string> with a DisplayWindow.
+    //! Associate a `list<string>` with a DisplayWindow.
     /*!
-     * This method must be called before open( ). The initial position in the list<string> and
+     * This method must be called before `open`. The initial position in the `list<string>` and
      * a title string can be registered with the DisplayWindow object.
      *
-     * Notice that this class provides no way to changed the displayed column number. The show(
-     * ) method handles the column number correctly, however. Thus derived classes (or the
-     * caller to set( )) can use this ability to good effect.
+     * Notice that this class provides no way to changed the displayed column number. The `show`
+     * method handles the column number correctly, however. Thus derived classes (or the caller
+     * to `set`) can use this ability to good effect.
      */
     void DisplayWindow::set(
         const char  *input_title,
@@ -112,9 +112,9 @@ namespace scr {
     //! Fill the window with text from the previously provided list of strings.
     /*!
      * This method takes top_line as a request for the desired first line to display. It
-     * verifies that this request will cause material from the list< string > to be seen. If
-     * top_line is out of range, it is adjusted. Thus functions that use show( ), such as
-     * display( ) below, do not need to do these checks.
+     * verifies that this request will cause material from the `list<string>` to be seen. If
+     * top_line is out of range, it is adjusted. Thus functions that use `show`, such as
+     * `display` below, do not need to do these checks.
      *
      * This method attempts to fill the window quickly and without flicker. The window is NOT
      * cleared and then refilled (which causes flicker); rather, each line is redrawn with
@@ -194,7 +194,7 @@ namespace scr {
         int  return_value;
         bool stop = false;
 
-        // If caller wants to force the display to a certail line, try to honor.
+        // If caller wants to force the display to a certain line, try to honor.
         if( forced != -1L ) top_line = forced;
 
         // Loop until user presses an invalid key.

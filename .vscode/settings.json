@@ -1,5 +1,4 @@
 {
-    "cppbuild.isEnabled": false,
     "editor.wordWrapColumn": 96,
     "rewrap.wholeComment": false,
     "rewrap.wrappingColumn": 96,
@@ -61,8 +60,12 @@
         "CTRLX",
         "CTRLY",
         "CTRLZ",
+        "DISPLAYWINDOW",
         "endcond",
+        "IMAGEBUFFER",
         "PGDN",
-        "PGUP"
+        "PGUP",
+        "STATUSLINE",
+        "TEXTWINDOW"
     ]
 }

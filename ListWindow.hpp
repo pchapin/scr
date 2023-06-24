@@ -24,8 +24,8 @@ namespace scr {
      */
     class ListWindow : public Window {
     private:
-        std::list< std::string > managed_list;  //!< Strings to display.
-        std::size_t max_items;                  //!< Maximum number of strings in the list.
+        std::list<std::string> managed_list;  //!< Strings to display.
+        std::size_t max_items;                //!< Maximum number of strings in the list.
 
     public:
         ListWindow( Manager *my_manager, std::size_t max, int row, int column, int width, int height ) :

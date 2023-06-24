@@ -1,5 +1,5 @@
 /*! \file    Window.hpp
- *  \brief   Interface to class Simple_Window and Window.
+ *  \brief   Interface to both unmanaged and managed window classes.
  *  \author  Peter Chapin <chapinp@proton.me>
  */
 

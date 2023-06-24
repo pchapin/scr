@@ -14,8 +14,8 @@ namespace scr {
     /*!
      * This class allows for easy handling of one line status flags in a program. The function
      * which creates the string that is printed in the status line is provided by the consumer
-     * and registered with the StatusLine object using set( ). This function can be changed on
-     * the fly without the use of close( ). This allows easy implementation of several apparant
+     * and registered with the StatusLine object using `set`. This function can be changed on
+     * the fly without the use of `close`. This allows easy implementation of several apparent
      * status lines with one StatusLine object.
      */
     class StatusLine : public SimpleWindow {
