@@ -1,8 +1,7 @@
 /*! \file    check.hpp
-    \brief   This file contains global declarations for the test program.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   This file contains global declarations for the test program.
+ *  \author  Peter Chapin <spiccality@kelseymountain.org>
+ */
 
 #ifndef CHECK_H
 #define CHECK_H

@@ -1,6 +1,6 @@
 /*! \file    DisplayWindow.hpp
  *  \brief   Interface to class DisplayWindow.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #ifndef DISPLAYWINDOW_HPP

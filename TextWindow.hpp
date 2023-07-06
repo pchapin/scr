@@ -1,6 +1,6 @@
 /*! \file    TextWindow.hpp
  *  \brief   Interface to class TextWindow.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #ifndef TEXTWINDOW_HPP

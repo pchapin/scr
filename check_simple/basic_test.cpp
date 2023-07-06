@@ -1,8 +1,7 @@
 /*! \file    basic_test.cpp
-    \brief   This file contains test code for the low level screen handling library.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   This file contains test code for the low level screen handling library.
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
+ */
 
 #include "check.hpp"
 #include "scr.hpp"
@@ -32,14 +31,14 @@ static const char *colors[]={
 /*           Function Prototypes           */
 /*=========================================*/
 
-static void fill_screen();
-static void position_test();
-static void color_test(int attribute);
-static void clear_test();
-static void scroll_test(direction_t direction);
-static void read_write_test();
-static void read_write_text_test();
-static void misc_test();
+static void fill_screen( );
+static void position_test( );
+static void color_test( int attribute );
+static void clear_test( );
+static void scroll_test( direction_t direction );
+static void read_write_test( );
+static void read_write_text_test( );
+static void misc_test( );
 
 void basic_test( )
 {

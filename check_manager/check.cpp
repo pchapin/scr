@@ -1,8 +1,7 @@
 /*! \file    check.cpp
-    \brief   This file contains the test program for the window manager.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   This file contains the test program for the window manager.
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
+ */
 
 #include "CommandWindow.hpp"
 #include "debug.hpp"

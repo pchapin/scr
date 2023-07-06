@@ -1,6 +1,6 @@
 /*! \file    ansiscr.hpp
  *  \brief   Functions for I/O using ANSI escape sequences.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #ifndef ANSISCR_HPP

@@ -1,6 +1,6 @@
 /*! \file    StatusLine.cpp
  *  \brief   Implementation of class StatusLine.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #include "scr.hpp"

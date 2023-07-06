@@ -1,6 +1,6 @@
 /*! \file    InputWindow.cpp
  *  \brief   Implementation of class InputWindow.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #include <cstring>

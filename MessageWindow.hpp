@@ -1,6 +1,6 @@
 /*! \file    MessageWindow.hpp
  *  \brief   Public interface to class MessageWindow.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #ifndef M_WINDOW_HPP

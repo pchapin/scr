@@ -1,6 +1,6 @@
 /*! \file    MessageWindow.cpp
  *  \brief   Implementation of class MessageWindow.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #include <cstddef>

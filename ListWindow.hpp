@@ -1,6 +1,6 @@
 /*! \file    ListWindow.hpp
  *  \brief   Interface to window class for displaying a list of strings.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #ifndef LISTWINDOW_HPP

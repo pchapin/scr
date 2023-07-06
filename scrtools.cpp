@@ -1,6 +1,6 @@
 /*! \file    scrtools.cpp
  *  \brief   Library of useful tools based on scr.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #include <cctype>

@@ -3,7 +3,7 @@
 #
 
 CXX=g++
-CXXFLAGS=-Wall -c -g -std=c++98
+CXXFLAGS=-Wall -c -g -std=c++20
 LINK=ar
 LINKFLAGS=-r -c
 SOURCES=ansiscr.cpp       \

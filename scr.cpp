@@ -1,6 +1,6 @@
 /*! \file    scr.cpp
  *  \brief   Implementation of portable screen handling functions.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #include "environ.hpp"

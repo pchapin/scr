@@ -1,6 +1,6 @@
 /*! \file    Manager.cpp
  *  \brief   Implementation of the window Manager.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #include <list>

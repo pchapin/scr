@@ -1,7 +1,6 @@
 /*! \file    overview.hpp
  *  \brief   Overview documentation of the scr library.
- *  \author  Peter Chapin <chapinp@proton.me>
- *  \date    2023-05-24
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 /*!

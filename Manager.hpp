@@ -1,6 +1,6 @@
 /*! \file    Manager.hpp
  *  \brief   Window manager definition file.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #ifndef MANAGER_HPP

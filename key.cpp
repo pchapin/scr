@@ -1,6 +1,6 @@
 /*! \file    key.cpp
  *  \brief   Basic keyboard input support.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  *
  * These functions return processed keystrokes in a platform independent way. In addition to
  * returning normal letter keys, various special keys can also be detected. See the list of key

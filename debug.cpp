@@ -1,6 +1,6 @@
 /*! \file    debug.cpp
  *  \brief   Implementation of an embedded-in-program debugging system.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  *  \date    2023-05-23
  *
  * This file contains the debugging system. This system is based, loosely, on the debugging

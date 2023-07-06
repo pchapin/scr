@@ -1,6 +1,6 @@
 /*! \file    CommandWindow.cpp
  *  \brief   Implementation of class CommandWindow.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymoutain.org>
  */
 
 #include <cstring>

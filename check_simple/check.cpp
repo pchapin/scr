@@ -1,8 +1,7 @@
 /*! \file    check.cpp
-    \brief   This file contains a test program for "simple" windows.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   This file contains a test program for "simple" windows.
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
+ */
 
 #include <cstdio>
 #include <cstdlib>

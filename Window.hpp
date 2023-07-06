@@ -1,6 +1,6 @@
 /*! \file    Window.hpp
  *  \brief   Interface to both unmanaged and managed window classes.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #ifndef WINDOW_H
@@ -40,11 +40,9 @@ namespace scr {
         char *hidden;       //!< Window image when a window is hidden.
         char *save_data;    //!< Saved background material.
 
-        // Disable copying of SimpleWindow objects by not defining these methods. Note that
-        // C++11 allows these methods to be defined as deleted functions, but we are only
-        // supporting C++98 at this time.
-        SimpleWindow( const SimpleWindow &existing );
-        SimpleWindow &operator=( const SimpleWindow &existing );
+        // Disable copying of SimpleWindow objects.
+        SimpleWindow( const SimpleWindow &existing ) = delete;
+        SimpleWindow &operator=( const SimpleWindow &existing ) = delete;
 
     protected:
         bool is_defined;    //!< True when open( ) has been used without error.

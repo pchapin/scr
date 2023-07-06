@@ -27,4 +27,4 @@ If you wish to contact me regarding this library, and I welcome comments, bug re
 contributions, etc.
 
 Peter Chapin  
-chapinp@proton.me  
+spicacality@kelseymountain.org    

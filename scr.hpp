@@ -1,6 +1,6 @@
 /*! \file    scr.hpp
  *  \brief   Portable screen/keyboard handling functions.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  *
  * These functions provide the low level screen access used by the rest of the library. They
  * shield the library from differences in operating system platform and provide a uniform

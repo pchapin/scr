@@ -1,8 +1,7 @@
 /*! \file    key_test.cpp
-    \brief   This file contains test code for the keyboard handling library.
-    \author  Peter C. Chapin <PChapin@vtc.vsc.edu>
-
-*/
+ *  \brief   This file contains test code for the keyboard handling library.
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
+ */
 
 #include "check.hpp"
 #include "scr.hpp"

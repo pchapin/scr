@@ -1,6 +1,6 @@
 /*! \file    Shadow.cpp
  *  \brief   Implementation of class Shadow.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #include <cstring>

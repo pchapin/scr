@@ -1,6 +1,6 @@
 /*! \file    debug.hpp
  *  \brief   Interface to an embedded-in-program debugging system.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #ifndef DEBUG_HPP

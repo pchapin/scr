@@ -1,6 +1,6 @@
 /*! \file    Window.cpp
  *  \brief   Implementation of class Simple_Window and Window.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #include <cstdlib>

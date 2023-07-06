@@ -1,6 +1,6 @@
 /*! \file    scrtools.hpp
  *  \brief   Public interface to screen tools package.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #ifndef SCRTOOLS_HPP

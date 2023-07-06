@@ -1,6 +1,6 @@
 /*! \file    TextWindow.cpp
  *  \brief   Implementation of class TextWindow.
- *  \author  Peter Chapin <chapinp@proton.me>
+ *  \author  Peter Chapin <spicacality@kelseymountain.org>
  */
 
 #include <cstdio>
