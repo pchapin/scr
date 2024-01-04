@@ -59,13 +59,14 @@
 
 #if eOPSYS == ePOSIX
 #include <map>
-// Curses related material...
-#define NOMACROS
+
+// Defining NCURSES_NOMACROS disables the function-like macros in curses.h in favor of actual
+// functions.
 #define NCURSES_NOMACROS
-#include <ncurses.h>
+#include <curses.h>
 #include <term.h>
 
-// Crude from <term.h> that interferes with Scr...
+// Macros from <term.h> that interferes with Scr.
 #undef clear_screen
 #undef max_colors
 #endif
@@ -84,38 +85,43 @@ namespace scr {
     //=================================
 
 #if defined(SCR_DIRECT)
-    static int NMBR_ROWS = 25;   // Number of rows on the IBM PC screen.
-    static int NMBR_COLS = 80;   // Number of columns on the IBM PC screen.
-    const  int MAX_PRINT_SIZE = 1024; // Largest string Print() can handle.
+    namespace {
+        int total_rows = 25;      // Total number of rows on the IBM PC screen.
+        int total_columns = 80;   // Total number of columns on the IBM PC screen.
+        constexpr int maximum_print_size = 1024; // Largest string `print` can handle.
+    }
 #endif
 
 #if defined(SCR_ANSI) || (eOPSYS == ePOSIX)
-    static int NMBR_ROWS = 24;   // Number of rows on the screen.
-    static int NMBR_COLS = 80;   // Number of columns on the screen.
-    const  int MAX_PRINT_SIZE = 1024; // Largest string print() can handle.
+    namespace {
+        int total_rows = 24;      // Total number of rows on the screen.
+        int total_columns = 80;   // Total number of columns on the screen.
+        constexpr int maximum_print_size = 1024; // Largest string `print` can handle.
 
-    static char *physical_image;
-    static int   physical_row = 1;     // Actual position of the cursor.
-    static int   physical_column = 1;  //   etc...
+        char *physical_image;
+        int physical_row = 1;     // Actual position of the cursor.
+        int physical_column = 1;  //   etc...
+    }
 #endif
 
 #if eOPSYS == ePOSIX
-    typedef std::pair< const unsigned char, chtype > CharacterPair;
-    typedef std::map< unsigned char, chtype, std::less< unsigned char > > CharacterMap;
-    typedef std::pair< const int, int > ColorPair;
-    typedef std::map< int, int, std::less< int > > ColorMap;
+    namespace {
+        typedef std::pair<const unsigned char, chtype> CharacterPair;
+        typedef std::map<unsigned char, chtype, std::less<>> CharacterMap;
+        typedef std::pair<const int, int> ColorPair;
+        typedef std::map<int, int, std::less<>> ColorMap;
 
-    // Stores information about a curses "color pair."
-    struct CursesColorInfo {
-        int foreground;
-        int background;
-    };
+        // Stores information about a curses "color pair."
+        struct CursesColorInfo {
+            short foreground;
+            short background;
+        };
 
-    static CharacterMap box_character_map;  // Maps scr box drawing characters to curses.
-    static ColorMap     colors_map;   // Maps Scr colors to curses colors.
-    static bool         color_works;  // =true if the terminal supports color.
+        CharacterMap box_character_map;  // Maps scr box drawing characters to curses.
+        ColorMap colors_map;   // Maps Scr colors to Curses colors.
+        bool color_works;  // =true if the terminal supports color.
+    }
 #endif
-
 
 #if (eOPSYS == eDOS) && defined(SCR_DIRECT)
 #define VIDEO_MONO           0  // Symbolic names for the two video modes.
@@ -130,39 +136,45 @@ namespace scr {
 #define SCROLL_DOWN          7
 #define GET_CRTMODE         15
 
-    static int       old_mode       = 0;             // Video mode before initialize( ).
-    static unsigned  screen_segment = 0xB800;        // Segment address of video RAM.
-    static int       video_mode     = VIDEO_COLOR;   // Current video mode.
+    namespace {
+        int       old_mode       = 0;             // Video mode before `initialize`.
+        unsigned  screen_segment = 0xB800;        // Segment address of video RAM.
+        int       video_mode     = VIDEO_COLOR;   // Current video mode.
+    }
 #endif
 
-    // General data required by all versions.
+    namespace {
+        // General data required by all versions.
 
-    // Note that if the values in the array below are ever changed, the character_associations
-    // array in `initialize_character_map` will have to be updated as well. That array is used
-    // by the curses version of Scr to map box drawing characters to a terminal's alternate
-    // character set.
-    //
-    static struct BoxChars box_definitions[]={
-        { 205, 186, 201, 187, 200, 188, 181, 198, 208, 210, 206 },  // Double lines.
-        { 196, 179, 218, 191, 192, 217, 180, 195, 193, 194, 197 },  // Single lines.
-        { 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177 },  // Dark graphic.
-        { 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176 },  // Light graphic.
-        { 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219 },  // Solid.
-        {  45, 124,  43,  43,  43,  43,  43,  43,  43,  43,  43 },  // ASCII.
-        {  32,  32,  32,  32,  32,  32,  32,  32,  32,  32,  32 }   // Blank.
-    };
+        // Note that if the values in the array below are ever changed, the character_associations
+        // array in `initialize_character_map` will have to be updated as well. That array is used
+        // by the Curses version of Scr to map box drawing characters to a terminal's alternate
+        // character set.
+        //
+        struct BoxChars box_definitions[] = {
+                { 205, 186, 201, 187, 200, 188, 181, 198, 208, 210, 206 },  // Double lines.
+                { 196, 179, 218, 191, 192, 217, 180, 195, 193, 194, 197 },  // Single lines.
+                { 177, 177, 177, 177, 177, 177, 177, 177, 177, 177, 177 },  // Dark graphic.
+                { 176, 176, 176, 176, 176, 176, 176, 176, 176, 176, 176 },  // Light graphic.
+                { 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219 },  // Solid.
+                { 45,  124, 43,  43,  43,  43,  43,  43,  43,  43,  43 },   // ASCII.
+                { 32,  32,  32,  32,  32,  32,  32,  32,  32,  32,  32 }    // Blank.
+        };
 
-    static int   initialize_counter = 0;  // Counts the number of pending Initialize() calls.
-    static int   max_columns = NMBR_COLS; // Usable size of the screen.
-    static int   max_rows    = NMBR_ROWS; //   etc...
-    static char *screen_image;
-    static int   virtual_column = 1;      // Virtual cursor coordinates.
-    static int   virtual_row = 1;         //   etc...
-    static char  work_buffer[MAX_PRINT_SIZE + 1];  // Used by print...
+        int initialize_counter = 0;  // Counts the number of pending Initialize() calls.
+        int max_columns = total_columns; // Usable size of the screen.
+        int max_rows = total_rows;       //   etc...
+        char *screen_image;
+        int virtual_column = 1;          // Virtual cursor coordinates.
+        int virtual_row = 1;             //   etc...
+        char work_buffer[maximum_print_size + 1];  // Used by `print`
+    }
+
 #if eOPSYS == eWIN32
-    static CHAR_INFO *console_image;  // Win32 requires this as well
+    namespace {
+        CHAR_INFO *console_image;    // Win32 requires this as well.
+    }
 #endif
-
 
     //=====================================
     //          Private Functions
@@ -170,210 +182,221 @@ namespace scr {
 
 #if eOPSYS == ePOSIX
 
-    static void initialize_character_map( )
-    {
-        static CharacterPair character_associations[] = {
-            CharacterPair( 205, ACS_HLINE ),
-            CharacterPair( 186, ACS_VLINE ),
-            CharacterPair( 201, ACS_ULCORNER ),
-            CharacterPair( 187, ACS_URCORNER ),
-            CharacterPair( 200, ACS_LLCORNER ),
-            CharacterPair( 188, ACS_LRCORNER ),
-            CharacterPair( 181, ACS_RTEE ),
-            CharacterPair( 198, ACS_LTEE ),
-            CharacterPair( 208, ACS_BTEE ),
-            CharacterPair( 210, ACS_TTEE ),
-            CharacterPair( 206, ACS_PLUS ),
-            CharacterPair( 196, ACS_HLINE ),
-            CharacterPair( 179, ACS_VLINE ),
-            CharacterPair( 218, ACS_ULCORNER ),
-            CharacterPair( 191, ACS_URCORNER ),
-            CharacterPair( 192, ACS_LLCORNER ),
-            CharacterPair( 217, ACS_LRCORNER ),
-            CharacterPair( 180, ACS_RTEE ),
-            CharacterPair( 195, ACS_LTEE ),
-            CharacterPair( 193, ACS_BTEE ),
-            CharacterPair( 194, ACS_TTEE ),
-            CharacterPair( 197, ACS_PLUS ),
-            CharacterPair( 177, ACS_CKBOARD ),
-            CharacterPair( 219, ACS_CKBOARD )
-        };
+    namespace {
+        void initialize_character_map( ) {
+            // Here we insert associations that map Scr's double line and single line box drawing
+            // characters to Curses's corresponding special characters. At the moment, we do not
+            // distinguish between double and single line boxes; both will look the same.
+            //
+            box_character_map.insert( {
+                // Double line.
+                CharacterPair( 205, ACS_HLINE ),
+                CharacterPair( 186, ACS_VLINE ),
+                CharacterPair( 201, ACS_ULCORNER ),
+                CharacterPair( 187, ACS_URCORNER ),
+                CharacterPair( 200, ACS_LLCORNER ),
+                CharacterPair( 188, ACS_LRCORNER ),
+                CharacterPair( 181, ACS_RTEE ),
+                CharacterPair( 198, ACS_LTEE ),
+                CharacterPair( 208, ACS_BTEE ),
+                CharacterPair( 210, ACS_TTEE ),
+                CharacterPair( 206, ACS_PLUS ),
 
-        box_character_map.insert(
-            character_associations,
-            character_associations + sizeof( character_associations ) / sizeof( CharacterPair ) );
-    }
+                // Single line.
+                CharacterPair( 196, ACS_HLINE ),
+                CharacterPair( 179, ACS_VLINE ),
+                CharacterPair( 218, ACS_ULCORNER ),
+                CharacterPair( 191, ACS_URCORNER ),
+                CharacterPair( 192, ACS_LLCORNER ),
+                CharacterPair( 217, ACS_LRCORNER ),
+                CharacterPair( 180, ACS_RTEE ),
+                CharacterPair( 195, ACS_LTEE ),
+                CharacterPair( 193, ACS_BTEE ),
+                CharacterPair( 194, ACS_TTEE ),
+                CharacterPair( 197, ACS_PLUS ),
 
-
-    static void initialize_colors( )
-    {
-        static ColorPair color_associations[] = {
-            ColorPair( WHITE  |REV_BLACK,    0 ),
-            ColorPair( BLUE   |REV_BLACK,    1 ),
-            ColorPair( GREEN  |REV_BLACK,    2 ),
-            ColorPair( CYAN   |REV_BLACK,    3 ),
-            ColorPair( RED    |REV_BLACK,    4 ),
-            ColorPair( MAGENTA|REV_BLACK,    5 ),
-            ColorPair( BROWN  |REV_BLACK,    6 ),
-            ColorPair( BLACK  |REV_BLACK,    7 ),
-
-            ColorPair( WHITE  |REV_BLUE,     8 ),
-            ColorPair( BLUE   |REV_BLUE,     9 ),
-            ColorPair( GREEN  |REV_BLUE,    10 ),
-            ColorPair( CYAN   |REV_BLUE,    11 ),
-            ColorPair( RED    |REV_BLUE,    12 ),
-            ColorPair( MAGENTA|REV_BLUE,    13 ),
-            ColorPair( BROWN  |REV_BLUE,    14 ),
-            ColorPair( BLACK  |REV_BLUE,    15 ),
-
-            ColorPair( WHITE  |REV_GREEN,   16 ),
-            ColorPair( BLUE   |REV_GREEN,   17 ),
-            ColorPair( GREEN  |REV_GREEN,   18 ),
-            ColorPair( CYAN   |REV_GREEN,   19 ),
-            ColorPair( RED    |REV_GREEN,   20 ),
-            ColorPair( MAGENTA|REV_GREEN,   21 ),
-            ColorPair( BROWN  |REV_GREEN,   22 ),
-            ColorPair( BLACK  |REV_GREEN,   23 ),
-
-            ColorPair( WHITE  |REV_CYAN,    24 ),
-            ColorPair( BLUE   |REV_CYAN,    25 ),
-            ColorPair( GREEN  |REV_CYAN,    26 ),
-            ColorPair( CYAN   |REV_CYAN,    27 ),
-            ColorPair( RED    |REV_CYAN,    28 ),
-            ColorPair( MAGENTA|REV_CYAN,    29 ),
-            ColorPair( BROWN  |REV_CYAN,    30 ),
-            ColorPair( BLACK  |REV_CYAN,    31 ),
-
-            ColorPair( WHITE  |REV_RED,     32 ),
-            ColorPair( BLUE   |REV_RED,     33 ),
-            ColorPair( GREEN  |REV_RED,     34 ),
-            ColorPair( CYAN   |REV_RED,     35 ),
-            ColorPair( RED    |REV_RED,     36 ),
-            ColorPair( MAGENTA|REV_RED,     37 ),
-            ColorPair( BROWN  |REV_RED,     38 ),
-            ColorPair( BLACK  |REV_RED,     39 ),
-
-            ColorPair( WHITE  |REV_MAGENTA, 40 ),
-            ColorPair( BLUE   |REV_MAGENTA, 41 ),
-            ColorPair( GREEN  |REV_MAGENTA, 42 ),
-            ColorPair( CYAN   |REV_MAGENTA, 43 ),
-            ColorPair( RED    |REV_MAGENTA, 44 ),
-            ColorPair( MAGENTA|REV_MAGENTA, 45 ),
-            ColorPair( BROWN  |REV_MAGENTA, 46 ),
-            ColorPair( BLACK  |REV_MAGENTA, 47 ),
-
-            ColorPair( WHITE  |REV_BROWN,   48 ),
-            ColorPair( BLUE   |REV_BROWN,   49 ),
-            ColorPair( GREEN  |REV_BROWN,   50 ),
-            ColorPair( CYAN   |REV_BROWN,   51 ),
-            ColorPair( RED    |REV_BROWN,   52 ),
-            ColorPair( MAGENTA|REV_BROWN,   53 ),
-            ColorPair( BROWN  |REV_BROWN,   54 ),
-            ColorPair( BLACK  |REV_BROWN,   55 ),
-
-            ColorPair( WHITE  |REV_WHITE,   56 ),
-            ColorPair( BLUE   |REV_WHITE,   57 ),
-            ColorPair( GREEN  |REV_WHITE,   58 ),
-            ColorPair( CYAN   |REV_WHITE,   59 ),
-            ColorPair( RED    |REV_WHITE,   60 ),
-            ColorPair( MAGENTA|REV_WHITE,   61 ),
-            ColorPair( BROWN  |REV_WHITE,   62 ),
-            ColorPair( BLACK  |REV_WHITE,   63 )
-        };
-        static CursesColorInfo color_initializers[] = {
-            { COLOR_WHITE,   COLOR_BLACK   },
-            { COLOR_BLUE,    COLOR_BLACK   },
-            { COLOR_GREEN,   COLOR_BLACK   },
-            { COLOR_CYAN,    COLOR_BLACK   },
-            { COLOR_RED,     COLOR_BLACK   },
-            { COLOR_MAGENTA, COLOR_BLACK   },
-            { COLOR_YELLOW,  COLOR_BLACK   },
-            { COLOR_BLACK,   COLOR_BLACK   },
-
-            { COLOR_WHITE,   COLOR_BLUE    },
-            { COLOR_BLUE,    COLOR_BLUE    },
-            { COLOR_GREEN,   COLOR_BLUE    },
-            { COLOR_CYAN,    COLOR_BLUE    },
-            { COLOR_RED,     COLOR_BLUE    },
-            { COLOR_MAGENTA, COLOR_BLUE    },
-            { COLOR_YELLOW,  COLOR_BLUE    },
-            { COLOR_BLACK,   COLOR_BLUE    },
-
-            { COLOR_WHITE,   COLOR_GREEN   },
-            { COLOR_BLUE,    COLOR_GREEN   },
-            { COLOR_GREEN,   COLOR_GREEN   },
-            { COLOR_CYAN,    COLOR_GREEN   },
-            { COLOR_RED,     COLOR_GREEN   },
-            { COLOR_MAGENTA, COLOR_GREEN   },
-            { COLOR_YELLOW,  COLOR_GREEN   },
-            { COLOR_BLACK,   COLOR_GREEN   },
-
-            { COLOR_WHITE,   COLOR_CYAN    },
-            { COLOR_BLUE,    COLOR_CYAN    },
-            { COLOR_GREEN,   COLOR_CYAN    },
-            { COLOR_CYAN,    COLOR_CYAN    },
-            { COLOR_RED,     COLOR_CYAN    },
-            { COLOR_MAGENTA, COLOR_CYAN    },
-            { COLOR_YELLOW,  COLOR_CYAN    },
-            { COLOR_BLACK,   COLOR_CYAN    },
-
-            { COLOR_WHITE,   COLOR_RED     },
-            { COLOR_BLUE,    COLOR_RED     },
-            { COLOR_GREEN,   COLOR_RED     },
-            { COLOR_CYAN,    COLOR_RED     },
-            { COLOR_RED,     COLOR_RED     },
-            { COLOR_MAGENTA, COLOR_RED     },
-            { COLOR_YELLOW,  COLOR_RED     },
-            { COLOR_BLACK,   COLOR_RED     },
-
-            { COLOR_WHITE,   COLOR_MAGENTA },
-            { COLOR_BLUE,    COLOR_MAGENTA },
-            { COLOR_GREEN,   COLOR_MAGENTA },
-            { COLOR_CYAN,    COLOR_MAGENTA },
-            { COLOR_RED,     COLOR_MAGENTA },
-            { COLOR_MAGENTA, COLOR_MAGENTA },
-            { COLOR_YELLOW,  COLOR_MAGENTA },
-            { COLOR_BLACK,   COLOR_MAGENTA },
-
-            { COLOR_WHITE,   COLOR_YELLOW  },
-            { COLOR_BLUE,    COLOR_YELLOW  },
-            { COLOR_GREEN,   COLOR_YELLOW  },
-            { COLOR_CYAN,    COLOR_YELLOW  },
-            { COLOR_RED,     COLOR_YELLOW  },
-            { COLOR_MAGENTA, COLOR_YELLOW  },
-            { COLOR_YELLOW,  COLOR_YELLOW  },
-            { COLOR_BLACK,   COLOR_YELLOW  },
-
-            { COLOR_WHITE,   COLOR_WHITE   },
-            { COLOR_BLUE,    COLOR_WHITE   },
-            { COLOR_GREEN,   COLOR_WHITE   },
-            { COLOR_CYAN,    COLOR_WHITE   },
-            { COLOR_RED,     COLOR_WHITE   },
-            { COLOR_MAGENTA, COLOR_WHITE   },
-            { COLOR_YELLOW,  COLOR_WHITE   },
-            { COLOR_BLACK,   COLOR_WHITE   }
-        };
-
-        color_works = true;
-        if( start_color( ) == ERR ) {
-            color_works = false;
-            return;
+                // Additional.
+                CharacterPair( 177, ACS_CKBOARD ),
+                CharacterPair( 219, ACS_CKBOARD )
+            } );
         }
 
-        int i;
-        int max_colors = COLOR_PAIRS;
-        if( max_colors > 64 ) max_colors = 64;
 
-        // Color pair #0 is predefined to be the terminal default (supposedly white on black).
-        for( i = 1; i < max_colors; i++ ) {
-            init_pair( i, color_initializers[i].foreground, color_initializers[i].background );
+        void initialize_colors( ) {
+            // Associates a Scr color with a color pair number.
+            static ColorPair color_associations[] = {
+                    ColorPair( WHITE | REV_BLACK, 0 ),
+                    ColorPair( BLUE | REV_BLACK, 1 ),
+                    ColorPair( GREEN | REV_BLACK, 2 ),
+                    ColorPair( CYAN | REV_BLACK, 3 ),
+                    ColorPair( RED | REV_BLACK, 4 ),
+                    ColorPair( MAGENTA | REV_BLACK, 5 ),
+                    ColorPair( BROWN | REV_BLACK, 6 ),
+                    ColorPair( BLACK | REV_BLACK, 7 ),
+
+                    ColorPair( WHITE | REV_BLUE, 8 ),
+                    ColorPair( BLUE | REV_BLUE, 9 ),
+                    ColorPair( GREEN | REV_BLUE, 10 ),
+                    ColorPair( CYAN | REV_BLUE, 11 ),
+                    ColorPair( RED | REV_BLUE, 12 ),
+                    ColorPair( MAGENTA | REV_BLUE, 13 ),
+                    ColorPair( BROWN | REV_BLUE, 14 ),
+                    ColorPair( BLACK | REV_BLUE, 15 ),
+
+                    ColorPair( WHITE | REV_GREEN, 16 ),
+                    ColorPair( BLUE | REV_GREEN, 17 ),
+                    ColorPair( GREEN | REV_GREEN, 18 ),
+                    ColorPair( CYAN | REV_GREEN, 19 ),
+                    ColorPair( RED | REV_GREEN, 20 ),
+                    ColorPair( MAGENTA | REV_GREEN, 21 ),
+                    ColorPair( BROWN | REV_GREEN, 22 ),
+                    ColorPair( BLACK | REV_GREEN, 23 ),
+
+                    ColorPair( WHITE | REV_CYAN, 24 ),
+                    ColorPair( BLUE | REV_CYAN, 25 ),
+                    ColorPair( GREEN | REV_CYAN, 26 ),
+                    ColorPair( CYAN | REV_CYAN, 27 ),
+                    ColorPair( RED | REV_CYAN, 28 ),
+                    ColorPair( MAGENTA | REV_CYAN, 29 ),
+                    ColorPair( BROWN | REV_CYAN, 30 ),
+                    ColorPair( BLACK | REV_CYAN, 31 ),
+
+                    ColorPair( WHITE | REV_RED, 32 ),
+                    ColorPair( BLUE | REV_RED, 33 ),
+                    ColorPair( GREEN | REV_RED, 34 ),
+                    ColorPair( CYAN | REV_RED, 35 ),
+                    ColorPair( RED | REV_RED, 36 ),
+                    ColorPair( MAGENTA | REV_RED, 37 ),
+                    ColorPair( BROWN | REV_RED, 38 ),
+                    ColorPair( BLACK | REV_RED, 39 ),
+
+                    ColorPair( WHITE | REV_MAGENTA, 40 ),
+                    ColorPair( BLUE | REV_MAGENTA, 41 ),
+                    ColorPair( GREEN | REV_MAGENTA, 42 ),
+                    ColorPair( CYAN | REV_MAGENTA, 43 ),
+                    ColorPair( RED | REV_MAGENTA, 44 ),
+                    ColorPair( MAGENTA | REV_MAGENTA, 45 ),
+                    ColorPair( BROWN | REV_MAGENTA, 46 ),
+                    ColorPair( BLACK | REV_MAGENTA, 47 ),
+
+                    ColorPair( WHITE | REV_BROWN, 48 ),
+                    ColorPair( BLUE | REV_BROWN, 49 ),
+                    ColorPair( GREEN | REV_BROWN, 50 ),
+                    ColorPair( CYAN | REV_BROWN, 51 ),
+                    ColorPair( RED | REV_BROWN, 52 ),
+                    ColorPair( MAGENTA | REV_BROWN, 53 ),
+                    ColorPair( BROWN | REV_BROWN, 54 ),
+                    ColorPair( BLACK | REV_BROWN, 55 ),
+
+                    ColorPair( WHITE | REV_WHITE, 56 ),
+                    ColorPair( BLUE | REV_WHITE, 57 ),
+                    ColorPair( GREEN | REV_WHITE, 58 ),
+                    ColorPair( CYAN | REV_WHITE, 59 ),
+                    ColorPair( RED | REV_WHITE, 60 ),
+                    ColorPair( MAGENTA | REV_WHITE, 61 ),
+                    ColorPair( BROWN | REV_WHITE, 62 ),
+                    ColorPair( BLACK | REV_WHITE, 63 )
+            };
+
+            // Defines which Curses colors are assigned to each number (index).
+            static CursesColorInfo color_initializers[] = {
+                    { COLOR_WHITE,   COLOR_BLACK },
+                    { COLOR_BLUE,    COLOR_BLACK },
+                    { COLOR_GREEN,   COLOR_BLACK },
+                    { COLOR_CYAN,    COLOR_BLACK },
+                    { COLOR_RED,     COLOR_BLACK },
+                    { COLOR_MAGENTA, COLOR_BLACK },
+                    { COLOR_YELLOW,  COLOR_BLACK },
+                    { COLOR_BLACK,   COLOR_BLACK },
+
+                    { COLOR_WHITE,   COLOR_BLUE },
+                    { COLOR_BLUE,    COLOR_BLUE },
+                    { COLOR_GREEN,   COLOR_BLUE },
+                    { COLOR_CYAN,    COLOR_BLUE },
+                    { COLOR_RED,     COLOR_BLUE },
+                    { COLOR_MAGENTA, COLOR_BLUE },
+                    { COLOR_YELLOW,  COLOR_BLUE },
+                    { COLOR_BLACK,   COLOR_BLUE },
+
+                    { COLOR_WHITE,   COLOR_GREEN },
+                    { COLOR_BLUE,    COLOR_GREEN },
+                    { COLOR_GREEN,   COLOR_GREEN },
+                    { COLOR_CYAN,    COLOR_GREEN },
+                    { COLOR_RED,     COLOR_GREEN },
+                    { COLOR_MAGENTA, COLOR_GREEN },
+                    { COLOR_YELLOW,  COLOR_GREEN },
+                    { COLOR_BLACK,   COLOR_GREEN },
+
+                    { COLOR_WHITE,   COLOR_CYAN },
+                    { COLOR_BLUE,    COLOR_CYAN },
+                    { COLOR_GREEN,   COLOR_CYAN },
+                    { COLOR_CYAN,    COLOR_CYAN },
+                    { COLOR_RED,     COLOR_CYAN },
+                    { COLOR_MAGENTA, COLOR_CYAN },
+                    { COLOR_YELLOW,  COLOR_CYAN },
+                    { COLOR_BLACK,   COLOR_CYAN },
+
+                    { COLOR_WHITE,   COLOR_RED },
+                    { COLOR_BLUE,    COLOR_RED },
+                    { COLOR_GREEN,   COLOR_RED },
+                    { COLOR_CYAN,    COLOR_RED },
+                    { COLOR_RED,     COLOR_RED },
+                    { COLOR_MAGENTA, COLOR_RED },
+                    { COLOR_YELLOW,  COLOR_RED },
+                    { COLOR_BLACK,   COLOR_RED },
+
+                    { COLOR_WHITE,   COLOR_MAGENTA },
+                    { COLOR_BLUE,    COLOR_MAGENTA },
+                    { COLOR_GREEN,   COLOR_MAGENTA },
+                    { COLOR_CYAN,    COLOR_MAGENTA },
+                    { COLOR_RED,     COLOR_MAGENTA },
+                    { COLOR_MAGENTA, COLOR_MAGENTA },
+                    { COLOR_YELLOW,  COLOR_MAGENTA },
+                    { COLOR_BLACK,   COLOR_MAGENTA },
+
+                    { COLOR_WHITE,   COLOR_YELLOW },
+                    { COLOR_BLUE,    COLOR_YELLOW },
+                    { COLOR_GREEN,   COLOR_YELLOW },
+                    { COLOR_CYAN,    COLOR_YELLOW },
+                    { COLOR_RED,     COLOR_YELLOW },
+                    { COLOR_MAGENTA, COLOR_YELLOW },
+                    { COLOR_YELLOW,  COLOR_YELLOW },
+                    { COLOR_BLACK,   COLOR_YELLOW },
+
+                    { COLOR_WHITE,   COLOR_WHITE },
+                    { COLOR_BLUE,    COLOR_WHITE },
+                    { COLOR_GREEN,   COLOR_WHITE },
+                    { COLOR_CYAN,    COLOR_WHITE },
+                    { COLOR_RED,     COLOR_WHITE },
+                    { COLOR_MAGENTA, COLOR_WHITE },
+                    { COLOR_YELLOW,  COLOR_WHITE },
+                    { COLOR_BLACK,   COLOR_WHITE }
+            };
+
+            // Are colors supported?
+            color_works = true;
+            if( start_color( ) == ERR ) {
+                color_works = false;
+                return;
+            }
+
+            // Find out how many color pairs we can use, but limit the number to 64.
+            short max_colors = COLOR_PAIRS;
+            if( max_colors > 64 ) max_colors = 64;
+
+            // Define the color pairs to Curses.
+            // Color pair #0 is predefined to be the terminal default (supposedly white on black).
+            for( short i = 1; i < max_colors; ++i ) {
+                init_pair( i, color_initializers[i].foreground, color_initializers[i].background );
+            }
+
+            // Map the Scr colors to the corresponding Curses color index.
+            colors_map.insert(
+                    color_associations,
+                    color_associations + sizeof( color_associations ) / sizeof( ColorPair ) );
         }
 
-        colors_map.insert(
-          color_associations,
-          color_associations + sizeof( color_associations ) / sizeof( ColorPair ) );
     }
-
 #endif
 
 
@@ -405,6 +428,8 @@ namespace scr {
      * \return true if the initialization was successful; false otherwise. If this function
      * returns false you should not use any other Scr functions. There is no need to call
      * `terminate` in such a case.
+     *
+     * \todo: Currently this function always returns true. It should be made more robust.
      */
     bool initialize( )
     {
@@ -426,20 +451,20 @@ namespace scr {
 
 #if (eOPSYS == eOS2) && defined(SCR_DIRECT)
         VioGetMode( &screen_info, 0 );
-        max_rows = NMBR_ROWS = screen_info.row;
-        max_columns = NMBR_COLS = screen_info.col;
+        max_rows = total_rows = screen_info.row;
+        max_columns = total_columns = screen_info.col;
 #endif
 
 #if (eOPSYS == eWIN32) && defined (SCR_DIRECT)
         CONSOLE_SCREEN_BUFFER_INFO scrninfo;
 
         GetConsoleScreenBufferInfo( GetStdHandle( STD_OUTPUT_HANDLE ), &scrninfo );
-        max_rows = NMBR_ROWS = scrninfo.srWindow.Bottom - scrninfo.srWindow.Top + 1;
-        max_columns = NMBR_COLS = scrninfo.srWindow.Right - scrninfo.srWindow.Left + 1;
+        max_rows = total_rows = scrninfo.srWindow.Bottom - scrninfo.srWindow.Top + 1;
+        max_columns = total_columns = scrninfo.srWindow.Right - scrninfo.srWindow.Left + 1;
 #endif
 
 #if (eOPSYS == ePOSIX)
-        // Initialize the curses package.
+        // Initialize the Curses package.
         initscr( );
         raw( );
         noecho( );
@@ -450,13 +475,13 @@ namespace scr {
         initialize_colors( );
 
         // How much screen space do we have?
-        max_rows = NMBR_ROWS = LINES;
-        max_columns = NMBR_COLS = COLS;
+        max_rows = total_rows = LINES;
+        max_columns = total_columns = COLS;
 #endif
 
 #if (eOPSYS == eDOS) && defined(SCR_DIRECT)
         // Learn what video mode is currently being used.
-        r.h.ah = static_cast< unsigned char >( GET_CRTMODE );
+        r.h.ah = static_cast<unsigned char>( GET_CRTMODE );
         do_interrupt( BIOS_VIDEO, &r, &r );
 
         // Save the old video mode.
@@ -470,19 +495,21 @@ namespace scr {
 
         // Otherwise, force mode 3 (25x80 color).
         else if( r.h.al != 3 ) {
-            r.h.ah = static_cast< unsigned char >( SET_CRTMODE );
+            r.h.ah = static_cast<unsigned char>( SET_CRTMODE );
             r.h.al = 3;
             do_interrupt( BIOS_VIDEO, &r, &r );
         }
 #endif
 
         // Allocate screen images.
-        screen_image = new char[NMBR_ROWS * 2 * NMBR_COLS];
+        screen_image = new char[total_rows * 2 * total_columns];
+
 #if (eOPSYS == ePOSIX) || defined(SCR_ANSI)
-        physical_image = new char[NMBR_ROWS * 2 * NMBR_COLS];
+        physical_image = new char[total_rows * 2 * total_columns];
 #endif
+
 #if (eOPSYS == eWIN32) && defined(SCR_DIRECT)
-        console_image = new CHAR_INFO[NMBR_ROWS * NMBR_COLS];
+        console_image = new CHAR_INFO[total_rows * total_columns];
 #endif
 
         // In any case, clear the screen and home the cursor.
@@ -490,7 +517,6 @@ namespace scr {
 
         // Adjust our records.
         ++initialize_counter;
-
         return true;
     }
 
@@ -509,13 +535,8 @@ namespace scr {
      */
     void terminate( )
     {
-#if (((eOPSYS == eOS2) || (eOPSYS == eWIN32)) && defined(SCR_DIRECT)) || (eOPSYS == ePOSIX)
-        int counter;
-#endif
-
 #if (eOPSYS == eDOS) && defined(SCR_DIRECT)
         union REGS  r;
-        int   counter;
 #endif
 
         if( initialize_counter == 0 ) return;  // initialize( ) never called.
@@ -524,7 +545,7 @@ namespace scr {
 
 #if ((eOPSYS == eOS2) || (eOPSYS == eWIN32)) && defined(SCR_DIRECT)
         // Clear the screen and home the cursor.
-        for( counter = 0; counter < NMBR_ROWS * 2 * NMBR_COLS; counter += 2 ) {
+        for( int counter = 0; counter < total_rows * 2 * total_columns; counter += 2 ) {
             screen_image[counter]     = ' ';
             screen_image[counter + 1] = WHITE|REV_BLACK;
         }
@@ -534,9 +555,9 @@ namespace scr {
 #endif
 
 #if defined(SCR_ANSI)
-        // Clear the screen and home the cursor. (We don't need to update screen_image[] or
-        // physical_image[]. This is the last scr... function that will be called until another
-        // initialize( )).
+        // Clear the screen and home the cursor. (We don't need to update `screen_image` or
+        // `physical_image`. This is the last Scr function that will be called until another
+        // `initialize`).
         //
         reset_screen( );
         erase_screen( );
@@ -545,7 +566,7 @@ namespace scr {
 
 #if (eOPSYS == ePOSIX)
         // Clear the screen and home the cursor.
-        for( counter = 0; counter < NMBR_ROWS * 2 * NMBR_COLS; counter += 2 ) {
+        for( int counter = 0; counter < total_rows * 2 * total_columns; counter += 2 ) {
             screen_image[counter]     = ' ';
             screen_image[counter + 1] = WHITE|REV_BLACK;
         }
@@ -575,7 +596,7 @@ namespace scr {
         // don't need to mess with this above).
         //
         else {
-            for( counter = 0; counter < NMBR_ROWS * 2 * NMBR_COLS; counter += 2 ) {
+            for( int counter = 0; counter < total_rows * 2 * total_columns; counter += 2 ) {
                 screen_image[counter]     = ' ';
                 screen_image[counter + 1] = WHITE|REV_BLACK;
             }
@@ -586,12 +607,14 @@ namespace scr {
 #endif
 
         // Free dynamic data structures.
-        delete [] screen_image; screen_image = NULL;
+        delete [] screen_image; screen_image = nullptr;
+
 #if eOPSYS == ePOSIX || defined(SCR_ANSI)
-        delete [] physical_image; physical_image = NULL;
+        delete [] physical_image; physical_image = nullptr;
 #endif
+
 #if eOPSYS == eWIN32 && defined(SCR_DIRECT)
-        delete [] console_image; console_image = NULL;
+        delete [] console_image; console_image = nullptr;
 #endif
 
         terminate_key( );
@@ -605,7 +628,7 @@ namespace scr {
      * structure pointed at by the return value. Such modifications change the box drawing
      * characters for that box type throughout the program. This is not a recommended practice,
      * although it may be useful in some cases.
-     * 
+     *
      * \bug The NO_BORDER option does not seem to be handled well. What should be done about it?
      */
     BoxChars *get_box_characters( BoxType the_type )
@@ -648,7 +671,7 @@ namespace scr {
 #endif
 
 #if (eOPSYS == ePOSIX)
-        return color_works == false;
+        return !color_works;
 #endif
 
 #if (eOPSYS == eDOS) && defined(SCR_DIRECT)
@@ -675,7 +698,7 @@ namespace scr {
             attribute |= WHITE;
         }
 
-        // Otherwise there's a colored background, force reverse video.
+        // Otherwise, there's a colored background, force reverse video.
         else {
             attribute |= REV_WHITE;
             attribute &= 0xF8;         // Zero out (make black) foreground only.
@@ -744,13 +767,13 @@ namespace scr {
     void adjust_dimensions( int &r, int &c, int &w, int &h )
     {
         if( r < 1 )         r = 1;
-        if( r > NMBR_ROWS ) r = NMBR_ROWS;
+        if( r > total_rows ) r = total_rows;
         if( c < 1 )         c = 1;
-        if( c > NMBR_COLS ) c = NMBR_COLS;
+        if( c > total_columns ) c = total_columns;
         if( h <= 0 )        h = 1;
         if( w <= 0 )        w = 1;
-        if( r + h - 1 > NMBR_ROWS ) h = NMBR_ROWS - r + 1;
-        if( c + w - 1 > NMBR_COLS ) w = NMBR_COLS - c + 1;
+        if( r + h - 1 > total_rows ) h = total_rows - r + 1;
+        if( c + w - 1 > total_columns ) w = total_columns - c + 1;
     }
 
 
@@ -772,7 +795,7 @@ namespace scr {
     /*!
      * When this function returns the buffer will be filled with alternating characters and
      * attribute bytes. The buffer must be 2 * width * height in size.
-     * 
+     *
      * \bug This function does not check the size of the buffer.
      *
      * \param row The row number of the region's upper left corner.
@@ -784,20 +807,20 @@ namespace scr {
     void read( int row, int column, int width, int height, char *buffer )
     {
         unsigned  number_of_rows;  // Loop index.
-        unsigned  row_length;      // Number of bytes in row of region.
+        unsigned  row_length;      // Number of bytes in row of a region.
         char     *screen_pointer;  // Pointer into the screen image.
 
         adjust_dimensions( row, column, width, height );
 
         row_length = 2 * width;
-        screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
+        screen_pointer = screen_image + ( ( row - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
 
         // Loop over all rows in the region.
         for( number_of_rows = height; number_of_rows > 0; number_of_rows-- ) {
 
             // Copy data from screen image to buffer and adjust offsets.
             std::memcpy( buffer, screen_pointer, row_length );
-            screen_pointer += 2 * NMBR_COLS;
+            screen_pointer += 2 * total_columns;
             buffer   += row_length;
         }
     }
@@ -808,7 +831,7 @@ namespace scr {
      * This function is similar to `read` except that it only returns the text in the region
      * instead of the text and the attributes. When this function returns the buffer will be
      * filled with characters only. The buffer must be width * height in size.
-     * 
+     *
      * \bug This function does not check the size of the buffer.
      *
      * \param row The row number of the region's upper left corner.
@@ -825,11 +848,11 @@ namespace scr {
 
         adjust_dimensions( row, column, width, height );
 
-        screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
+        screen_pointer = screen_image + ( ( row - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
         for( ; height > 0; height-- ) {
             source = screen_pointer;
             for( i = 0; i < width; i++, source++ ) *buffer++ = *source++;
-            screen_pointer += 2 * NMBR_COLS;
+            screen_pointer += 2 * total_columns;
         }
     }
 
@@ -839,7 +862,7 @@ namespace scr {
      * When this function returns the Scr internal screen buffer will be filled with alternating
      * characters and attribute bytes from the given memory space. The buffer is assumed to be
      * 2 * width * height in size.
-     * 
+     *
      * \bug This function does not check the size of the buffer.
      * \todo Should this function convert the attributes to account for monochrome monitors?
      *
@@ -853,20 +876,20 @@ namespace scr {
     void write( int row, int column, int width, int height, const char *buffer )
     {
         unsigned  number_of_rows;  // Loop index.
-        unsigned  row_length;      // Number of bytes in row of region.
+        unsigned  row_length;      // Number of bytes in row of a region.
         char     *screen_pointer;  // Pointer into the screen image.
 
         adjust_dimensions( row, column, width, height );
 
         row_length = 2 * width;
-        screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
+        screen_pointer = screen_image + ( ( row - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
 
         // Loop over all rows in the region.
         for( number_of_rows = height; number_of_rows > 0; number_of_rows-- ) {
 
             // Copy data from buffer to screen image and adjust offsets.
             std::memcpy( screen_pointer, buffer, row_length );
-            screen_pointer += 2 * NMBR_COLS;
+            screen_pointer += 2 * total_columns;
             buffer += row_length;
         }
     }
@@ -877,7 +900,7 @@ namespace scr {
      * This function is similar to `write` except that it only writes text. When this function
      * returns the Scr internal screen buffer will be filled with characters from the given
      * memory space. The buffer is assumed to be width * height in size.
-     * 
+     *
      * \bug This function does not check the size of the buffer.
      *
      * \param row The row number of the region's upper left corner.
@@ -895,11 +918,11 @@ namespace scr {
 
         adjust_dimensions( row, column, width, height );
 
-        screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
+        screen_pointer = screen_image + ( ( row - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
         for( ; height > 0; height-- ) {
             destination = screen_pointer;
             for( i = 0; i < width; i++, destination++ ) *destination++ = *buffer++;
-            screen_pointer += 2 * NMBR_COLS;
+            screen_pointer += 2 * total_columns;
         }
     }
 
@@ -927,8 +950,8 @@ namespace scr {
         attribute = convert_attribute( attribute );
 
         va_start( args, format );
-        std::vsnprintf( work_buffer, MAX_PRINT_SIZE + 1, format, args );
-        screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
+        std::vsnprintf( work_buffer, maximum_print_size + 1, format, args );
+        screen_pointer = screen_image + ( ( row - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
         while( *string && width-- ) {
             *screen_pointer++ = *string++;
             *screen_pointer++ = static_cast< char >( attribute );
@@ -959,8 +982,8 @@ namespace scr {
         adjust_dimensions( row, column, width, dummy_height );
 
         va_start( args, format );
-        std::vsnprintf( work_buffer, MAX_PRINT_SIZE + 1, format, args );
-        screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
+        std::vsnprintf( work_buffer, maximum_print_size + 1, format, args );
+        screen_pointer = screen_image + ( ( row - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
         while( *string && width-- ) {
             *screen_pointer++ = *string++;
             screen_pointer++;
@@ -988,14 +1011,14 @@ namespace scr {
         adjust_dimensions( row, column, width, height );
         attribute = convert_attribute( attribute );
 
-        screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
+        screen_pointer = screen_image + ( ( row - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
         for( ; height > 0; height-- ) {
             destination = screen_pointer;
             for( i = 0; i < width; i++ ) {
                 *destination++ = ' ';
                 *destination++ = static_cast< char >( attribute );
             }
-            screen_pointer += 2 * NMBR_COLS;
+            screen_pointer += 2 * total_columns;
         }
     }
 
@@ -1021,14 +1044,14 @@ namespace scr {
         adjust_dimensions( row, column, width, height );
         attribute = convert_attribute( attribute );
 
-        screen_pointer = screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
+        screen_pointer = screen_image + ( ( row - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
         for( ; height > 0; height-- ) {
             destination = screen_pointer;
             for( i = 0; i < width; i++ ) {
                 destination++;
                 *destination++ = static_cast< char >( attribute );
             }
-            screen_pointer += 2 * NMBR_COLS;
+            screen_pointer += 2 * total_columns;
         }
     }
 
@@ -1067,12 +1090,12 @@ namespace scr {
 
         if( direction == UP ) {
             screen_pointer =
-                screen_image + ( ( row - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
-            source_pointer = screen_pointer + ( number_of_rows * 2 * NMBR_COLS );
+                    screen_image + ( ( row - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
+            source_pointer = screen_pointer + ( number_of_rows * 2 * total_columns );
             for( row_counter = 0; row_counter < height - number_of_rows; row_counter++ ) {
                 std::memcpy( screen_pointer, source_pointer, 2 * width );
-                screen_pointer += 2 * NMBR_COLS;
-                source_pointer += 2 * NMBR_COLS;
+                screen_pointer += 2 * total_columns;
+                source_pointer += 2 * total_columns;
             }
             clear( row + ( height - number_of_rows ), column, width, number_of_rows, attribute );
         }
@@ -1080,12 +1103,12 @@ namespace scr {
         // Otherwise we're trying to scroll down.
         else {
             screen_pointer =
-                screen_image + ( ( row - 1 + height - 1 ) * 2 * NMBR_COLS ) + ( column - 1 ) * 2;
-            source_pointer = screen_pointer - ( number_of_rows * 2 * NMBR_COLS );
+                    screen_image + ( ( row - 1 + height - 1 ) * 2 * total_columns ) + ( column - 1 ) * 2;
+            source_pointer = screen_pointer - ( number_of_rows * 2 * total_columns );
             for( row_counter = 0; row_counter < height - number_of_rows; row_counter++ ) {
                 std::memcpy( screen_pointer, source_pointer, 2 * width );
-                screen_pointer -= 2 * NMBR_COLS;
-                source_pointer -= 2 * NMBR_COLS;
+                screen_pointer -= 2 * total_columns;
+                source_pointer -= 2 * total_columns;
             }
             clear( row, column, width, number_of_rows, attribute );
         }
@@ -1104,9 +1127,9 @@ namespace scr {
     {
         // Be sure the coordinates are in bounds.
         if( row < 1 )            row    = 1;
-        if( row > NMBR_ROWS )    row    = NMBR_ROWS;
+        if( row > total_rows ) row    = total_rows;
         if( column < 1 )         column = 1;
-        if( column > NMBR_COLS ) column = NMBR_COLS;
+        if( column > total_columns ) column = total_columns;
 
         virtual_row = row;
         virtual_column = column;
@@ -1180,7 +1203,7 @@ namespace scr {
     void clear_screen( )
     {
         // This will update both the screen image and the physical screen.
-        clear( 1, 1, NMBR_COLS, NMBR_ROWS, WHITE|REV_BLACK );
+        clear( 1, 1, total_columns, total_rows, WHITE|REV_BLACK );
         set_cursor_position( 1, 1 );
         refresh( );
     }
@@ -1200,10 +1223,10 @@ namespace scr {
             FP_OFF( screen_pointer ),
             screen_segment,
             0x0000,
-            NMBR_ROWS * 2 * NMBR_COLS);
+            total_rows * 2 * total_columns);
 #else
         // Just copy stuff to raw linear addresses if we are using the extender.
-        std::memcpy( ( char * )0x000B8000, screen_image, NMBR_ROWS * 2 * NMBR_COLS );
+        std::memcpy( ( char * )0x000B8000, screen_image, total_rows * 2 * total_columns );
 #endif
 
         // Position the cursor to the correct location.
@@ -1216,25 +1239,25 @@ namespace scr {
 
 #if (eOPSYS == eOS2)
         // Put the text and attributes into video RAM.
-        VioWrtCellStr( screen_image, NMBR_ROWS * 2 * NMBR_COLS, 0, 0, 0 );
+        VioWrtCellStr( screen_image, total_rows * 2 * total_columns, 0, 0, 0 );
 
         // Position the cursor to the correct location.
         VioSetCurPos( virtual_row - 1, virtual_column - 1, 0 );
 #endif
 
 #if (eOPSYS == eWIN32)
-        // This assumes NMBR_COLS and NMBR_ROWS are both < 32k.
+        // This assumes total_columns and total_rows are both < 32k.
         COORD  where = { 0, 0 };
-        COORD  size  = { static_cast< SHORT >( NMBR_COLS ),
-                         static_cast< SHORT >( NMBR_ROWS ) };
+        COORD  size  = { static_cast< SHORT >( total_columns ),
+                         static_cast< SHORT >( total_rows ) };
 
         SMALL_RECT rwhere = { 0, 0,
-                              static_cast< SHORT >( NMBR_COLS - 1 ),
-                              static_cast< SHORT >( NMBR_ROWS - 1 ) };
+                              static_cast< SHORT >( total_columns - 1 ),
+                              static_cast< SHORT >( total_rows - 1 ) };
         HANDLE hStdOut = GetStdHandle( STD_OUTPUT_HANDLE );
 
         // Copy the screen image to the console image.
-        for( int cc = 0; cc < NMBR_ROWS * NMBR_COLS; cc++ ) {
+        for( int cc = 0; cc < total_rows * total_columns; cc++ ) {
             console_image[cc].Char.UnicodeChar = 0;
             console_image[cc].Char.AsciiChar = screen_image[cc * 2];
             console_image[cc].Attributes = screen_image[cc * 2 + 1];
@@ -1310,7 +1333,7 @@ namespace scr {
         erase_screen( );
 
         // Make the arrays correct.
-        for( counter = 0; counter < NMBR_ROWS * 2 * NMBR_COLS; counter += 2 ) {
+        for( counter = 0; counter < total_rows * 2 * total_columns; counter += 2 ) {
             screen_image[counter]        = ' ';
             screen_image[counter + 1]    = WHITE|REV_BLACK;
             physical_image[counter]      = ' ';
@@ -1335,7 +1358,7 @@ namespace scr {
                                    // image that we want to print.
 
         // Scan over the entire screen, one row at a time.
-        for( row_count = 1; row_count <= NMBR_ROWS; row_count++ ) {
+        for( row_count = 1; row_count <= total_rows; row_count++ ) {
 
             // Put the cursor at the start of the row and force the current color/attribute
             // state to something we know.
@@ -1345,10 +1368,10 @@ namespace scr {
             reset_screen( );
 
             // Point into the screen image.
-            current_character = screen_image + ( row_count - 1 ) *  2 * NMBR_COLS;
+            current_character = screen_image + ( row_count - 1 ) *  2 * total_columns;
 
             // Scan down the row...
-            for( column_count = 1; column_count <= NMBR_COLS; column_count++ ) {
+            for( column_count = 1; column_count <= total_columns; column_count++ ) {
 
                 // If the current character's color is different than the current state, change
                 // color/attribute as needed.
@@ -1390,11 +1413,11 @@ namespace scr {
         current_attribute = WHITE|REV_BLACK;
 
         // Loop over the entire screen.
-        for( row_count = 1; row_count <= NMBR_ROWS; row_count++ ) {
-            for( column_count = 1; column_count <= NMBR_COLS; column_count++ ) {
+        for( row_count = 1; row_count <= total_rows; row_count++ ) {
+            for( column_count = 1; column_count <= total_columns; column_count++ ) {
 
                 // Compute offset into the image arrays of the current character.
-                int array_index = ( row_count - 1 ) * 2 * NMBR_COLS + 2 * ( column_count - 1 );
+                int array_index = ( row_count - 1 ) * 2 * total_columns + 2 * ( column_count - 1 );
 
                 // If this character is already what we want, skip it.
                 if( screen_image[array_index]     == physical_image[array_index] &&
@@ -1463,7 +1486,7 @@ namespace scr {
         werase( stdscr );
 
         // Make the arrays correct.
-        for( counter = 0; counter < NMBR_ROWS * 2 * NMBR_COLS; counter += 2 ) {
+        for( counter = 0; counter < total_rows * 2 * total_columns; counter += 2 ) {
             screen_image[counter]        = ' ';
             screen_image[counter + 1]    = WHITE|REV_BLACK;
             physical_image[counter]      = ' ';
@@ -1490,16 +1513,16 @@ namespace scr {
                                      // image that we want to print.
 
         // Scan over the entire screen, one row at a time.
-        for( row_count = 1; row_count <= NMBR_ROWS; row_count++ ) {
+        for( row_count = 1; row_count <= total_rows; row_count++ ) {
 
             // Put the cursor at the start of the row.
             move( row_count - 1, 0 );
 
             // Point into the screen image.
-            current_character = screen_image + ( row_count - 1 ) * 2 * NMBR_COLS;
+            current_character = screen_image + ( row_count - 1 ) * 2 * total_columns;
 
             // Scan down the row...
-            for( column_count = 1; column_count <= NMBR_COLS; column_count++ ) {
+            for( column_count = 1; column_count <= total_columns; column_count++ ) {
 
                 // Print the character.
                 chtype new_character;
@@ -1543,11 +1566,11 @@ namespace scr {
         int   column_count;
 
         // Loop over the entire screen.
-        for( row_count = 1; row_count <= NMBR_ROWS; row_count++ ) {
-            for( column_count = 1; column_count <= NMBR_COLS; column_count++ ) {
+        for( row_count = 1; row_count <= total_rows; row_count++ ) {
+            for( column_count = 1; column_count <= total_columns; column_count++ ) {
 
                 // Compute offset into the image arrays of the current character.
-                int array_index = ( row_count - 1 ) * 2 * NMBR_COLS + 2 * ( column_count - 1 );
+                int array_index = ( row_count - 1 ) * 2 * total_columns + 2 * ( column_count - 1 );
 
                 // If this character is already what we want, skip it.
                 if( screen_image[array_index]   == physical_image[array_index]  &&
